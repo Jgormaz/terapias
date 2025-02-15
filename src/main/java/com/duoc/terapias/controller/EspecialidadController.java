@@ -6,6 +6,7 @@ import com.duoc.terapias.model.Especialidad;
 import com.duoc.terapias.model.Servicio;
 import com.duoc.terapias.service.EspecialidadService;
 import com.duoc.terapias.service.ServicioService;
+import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,60 +24,39 @@ public class EspecialidadController {
     @Autowired
     private ServicioService servicioService;
     
-    @GetMapping("/{id}/servicios")
-    public String mostrarServicios(@PathVariable String id, Model model) {
-        Optional<Especialidad> especialidad = especialidadService.obtenerPorId(id);
-        
-        if (especialidad.isPresent()) {
-            model.addAttribute("especialidad", especialidad.get());
-            model.addAttribute("servicios", servicioService.obtenerServiciosPorEspecialidad(id));
-            model.addAttribute("nuevoServicio", new Servicio());
-            return "servicios";
-        } else {
-            return "redirect:/especialidades";
-        }
-    }
-
-    @PostMapping("/{id}/servicios/agregar")
-    public String agregarServicio(@PathVariable String id, @ModelAttribute Servicio servicio) {
-        Optional<Especialidad> especialidad = especialidadService.obtenerPorId(id);
-        
-        if (especialidad.isPresent()) {
-            servicio.setEspecialidad(especialidad.get());
-            servicioService.guardarServicio(servicio);
-        }
-        
-        return "redirect:/especialidades/" + id + "/servicios";
-    }
-
-    @PostMapping("/servicios/eliminar/{id}")
-    public String eliminarServicio(@PathVariable String id) {
-        servicioService.eliminarServicio(id);
-        return "redirect:/especialidades";
-    }
-    
     @GetMapping
     public String listarEspecialidades(Model model) {
         List<Especialidad> especialidades = especialidadService.obtenerTodas();
         model.addAttribute("especialidades", especialidades);
-        model.addAttribute("especialidad", new Especialidad()); // Agregar un objeto vacío
+        model.addAttribute("especialidad", new Especialidad()); // Objeto vacío para el formulario
         return "especialidades";
     }
-
     
-    /*@GetMapping("/editar/{id}")
-    public String editarEspecialidad(@PathVariable String id, Model model) {
-        Optional<Especialidad> especialidad = especialidadService.obtenerPorId(id);
-        if (especialidad.isPresent()) {
-            model.addAttribute("especialidad", especialidad.get());
-            return "especialidad_form";
-        }
-        return "redirect:/especialidades";
-    }*/
+    @GetMapping("/nueva")
+    public String nuevaEspecialidad(Model model) {
+        model.addAttribute("especialidad", new Especialidad());
+        return "especialidad_form"; // Vista para crear especialidad con servicios
+    }
     
     @PostMapping("/guardar")
-    public String guardarEspecialidad(@ModelAttribute Especialidad especialidad) {
+    public String guardarEspecialidad(@ModelAttribute Especialidad especialidad,
+                                      @RequestParam("idsServicios") List<String> idsServicios,
+                                      @RequestParam("nombresServicios") List<String> nombresServicios,
+                                      @RequestParam("descripcionesServicios") List<String> descripcionesServicios) {
+        List<Servicio> servicios = new ArrayList<>();
+
+        for (int i = 0; i < idsServicios.size(); i++) {
+            Servicio servicio = new Servicio();
+            servicio.setIdServicio(idsServicios.get(i)); // Se asigna el ID ingresado manualmente
+            servicio.setNombre(nombresServicios.get(i));
+            servicio.setDescripcion(descripcionesServicios.get(i));
+            servicio.setEspecialidad(especialidad);
+            servicios.add(servicio);
+        }
+
+        especialidad.setServicios(servicios);
         especialidadService.guardar(especialidad);
+
         return "redirect:/especialidades";
     }
     
@@ -86,24 +66,19 @@ public class EspecialidadController {
         return "redirect:/especialidades";
     }
     
-    // Mostrar formulario de edición con los datos cargados
     @GetMapping("/editar/{id}")
     public String mostrarFormularioEdicion(@PathVariable String id, Model model) {
         Optional<Especialidad> especialidad = especialidadService.obtenerPorId(id);
-
         if (especialidad.isPresent()) {
             model.addAttribute("especialidad", especialidad.get());
-            return "editar-especialidad"; // Carga la página de edición
-        } else {
-            return "redirect:/especialidades"; // Si no encuentra la especialidad, vuelve a la lista
+            return "editar-especialidad"; // Vista para editar especialidad
         }
+        return "redirect:/especialidades";
     }
-
-    // Procesar el formulario y actualizar los datos
+    
     @PostMapping("/actualizar")
     public String actualizarEspecialidad(@ModelAttribute Especialidad especialidad) {
         especialidadService.guardar(especialidad);
-        return "redirect:/especialidades"; // Redirige a la lista de especialidades
+        return "redirect:/especialidades";
     }
 }
-
