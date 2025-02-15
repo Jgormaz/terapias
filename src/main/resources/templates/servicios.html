@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Servicios de Especialidad</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <h2>Servicios de la Especialidad: <span th:text="${especialidad.nombre}"></span></h2>
+    
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th sec:authorize="hasRole('ROLE_ADMIN')">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="servicio : ${servicios}">
+                <td th:text="${servicio.ID_servicio}"></td>
+                <td th:text="${servicio.nombre}"></td>
+                <td th:text="${servicio.descripcion}"></td>
+                <td sec:authorize="hasRole('ROLE_ADMIN')">
+                    <form th:action="@{/especialidades/servicios/eliminar/{id}(id=${servicio.ID_servicio})}" method="post" style="display:inline;">
+                        <button type="submit" onclick="return confirm('¿Eliminar este servicio?');">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div sec:authorize="hasRole('ROLE_ADMIN')">
+        <h3>Agregar Nuevo Servicio</h3>
+        <form th:action="@{/especialidades/{id}/servicios/agregar(id=${especialidad.ID_especialidad})}" method="post" th:object="${nuevoServicio}">
+            <label>ID:</label>
+            <input type="text" th:field="*{ID_servicio}" required />
+            <label>Nombre:</label>
+            <input type="text" th:field="*{nombre}" required />
+            <label>Descripción:</label>
+            <input type="text" th:field="*{descripcion}" required />
+            <button type="submit">Guardar</button>
+        </form>
+    </div>
+
+    <a href="/especialidades">Volver a Especialidades</a>
+</body>
+</html>
+

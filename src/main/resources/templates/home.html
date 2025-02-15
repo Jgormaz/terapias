@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<p>Usuario autenticado: <span th:text="${username}"></span></p>
+<p>Roles detectados: <span th:text="${roles}"></span></p>
+
+<p>Autenticado: <span sec:authorize="isAuthenticated()">Sí</span> <span sec:authorize="!isAuthenticated()">No</span></p>   
+
+<p sec:authorize="isAuthenticated()">
+    Usuario autenticado: <span sec:authentication="name"></span>
+</p>
+<p sec:authorize="isAuthenticated()">
+    Roles: <span sec:authentication="principal.authorities"></span>
+</p>
+
+    <!-- Verifica si hay un usuario autenticado -->
+    <div th:if="${#authorization.expression('isAuthenticated()')}">
+        <p>Usuario: <span th:text="${#authentication.name}"></span></p>
+        <a th:href="@{/logout}">Cerrar sesión</a>
+    </div>
+
+<nav>
+    <ul>
+        
+        <li><a th:href="@{/login(role='admin')}">Admin</a></li>
+        <li><a th:href="@{/login(role='terapeuta')}">Terapeuta</a></li>
+        <li sec:authorize="hasAnyAuthority('ROLE_ADMIN', 'ROLE_TERAPEUTA')">
+            <a th:href="@{/especialidades}">Especialidades</a>
+            <a th:href="@{/servicios}">Servicio</a>
+        </li>
+    </ul>
+</nav>
+    
+    <h1>Bienvenido a la Página Principal</h1>
+    <p>Selecciona una opción del menú.</p>
+</body>
+</html>
