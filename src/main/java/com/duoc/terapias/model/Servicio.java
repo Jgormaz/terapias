@@ -6,7 +6,9 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "servicio")
 public class Servicio {
+
     @Id
+    //@GeneratedValue(strategy = GenerationType.IDENTITY) // O GenerationType.UUID si es un String
     @Column(name = "ID_servicio")
     private String idServicio;
     
