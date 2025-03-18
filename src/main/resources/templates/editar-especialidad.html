@@ -9,7 +9,7 @@
     <h2>Editar Especialidad</h2>
 
     <form th:action="@{/especialidades/actualizar}" method="post" th:object="${especialidad}">
-        <input type="hidden" th:field="*{ID_especialidad}"/> <!-- Campo oculto con el ID -->
+        <input type="hidden" th:field="*{idEspecialidad}"/> <!-- Campo oculto con el ID -->
 
         <label>Nombre:</label>
         <input type="text" th:field="*{nombre}" required />
