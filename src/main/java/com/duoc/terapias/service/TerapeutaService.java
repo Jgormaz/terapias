@@ -5,7 +5,6 @@ import com.duoc.terapias.dto.TerapeutaInfoDTO;
 import com.duoc.terapias.model.ServicioTerapeuta;
 import com.duoc.terapias.model.Terapeuta;
 import com.duoc.terapias.repository.TerapeutaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,5 +49,11 @@ public class TerapeutaService {
 
         return terapeutasInfo;
     }
+    
+    @Transactional
+    public void guardar(Terapeuta terapeuta) {
+        terapeutaRepository.save(terapeuta);
+    }   
+
 }
 
