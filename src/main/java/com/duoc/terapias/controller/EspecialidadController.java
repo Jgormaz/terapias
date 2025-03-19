@@ -78,6 +78,9 @@ public class EspecialidadController {
     
     @PostMapping("/actualizar")
     public String actualizarEspecialidad(@ModelAttribute Especialidad especialidad) {
+        if (especialidad.getServicios() == null) {
+            especialidad.setServicios(new ArrayList<>());
+        }
         especialidadService.guardar(especialidad);
         return "redirect:/especialidades";
     }
