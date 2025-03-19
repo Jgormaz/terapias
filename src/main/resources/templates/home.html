@@ -2,8 +2,29 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Home</title>
+    <title>Especialidades y Terapias</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .acordeon-item {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .acordeon-header {
+            background: #f7f7f7;
+            padding: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 8px 8px 0 0;
+        }
+        .acordeon-body {
+            display: none;
+            padding: 10px;
+        }
+        .acordeon-body.show {
+            display: block;
+        }
+    </style>
 </head>
 <body>
 <p>Usuario autenticado: <span th:text="${username}"></span></p>
@@ -38,5 +59,39 @@
     
     <h1>Bienvenido a la Página Principal</h1>
     <p>Selecciona una opción del menú.</p>
+    
+    <h2>Especialidades y sus Terapias</h2>
+
+    <div th:each="especialidad : ${especialidades}" class="acordeon-item">
+        <!-- Encabezado del acordeón -->
+        <div class="acordeon-header" th:onclick="|toggleAcordeon('body-__${especialidad.idEspecialidad}__')|">
+            <span th:text="${especialidad.nombre}"></span>
+        </div>
+
+        <!-- Cuerpo del acordeón -->
+        <div th:id="|body-${especialidad.idEspecialidad}|" class="acordeon-body">
+            <p><strong>Descripción:</strong> <span th:text="${especialidad.descripcion}"></span></p>
+            <h4>Terapias:</h4>
+            <ul>
+                <li th:each="terapia : ${especialidad.servicios}" th:text="${terapia.nombre}"></li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Función para mostrar/ocultar un acordeón y cerrar los demás
+        function toggleAcordeon(id) {
+            // Ocultar todos los acordeones
+            document.querySelectorAll('.acordeon-body').forEach(body => {
+                if (body.id !== id) {
+                    body.classList.remove('show');
+                }
+            });
+
+            // Mostrar el acordeón seleccionado
+            const body = document.getElementById(id);
+            body.classList.toggle('show');
+        }
+    </script>
 </body>
 </html>

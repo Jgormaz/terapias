@@ -37,6 +37,17 @@ public class Especialidad {
     public String toString() {
         return "Especialidad{" + "ID_especialidad='" + idEspecialidad + '\'' + ", nombre='" + nombre + '\'' + '}';
     }
+    
+    public void addServicio(Servicio servicio) {
+        servicios.add(servicio);
+        servicio.setEspecialidad(this);
+    }
+
+    public void removeServicio(Servicio servicio) {
+        servicios.remove(servicio);
+        servicio.setEspecialidad(null);
+    }
+
 }
 
 
