@@ -6,17 +6,22 @@ import com.duoc.terapias.model.Terapeuta;
 import com.duoc.terapias.service.TerapeutaService;
 import com.duoc.terapias.service.ComunaService;
 import com.duoc.terapias.service.RegionService;
+import com.duoc.terapias.service.ServicioService;
+import com.duoc.terapias.service.ServicioTerapeutaService;
+import java.security.Principal;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
+@RequestMapping("/terapeuta")
 public class TerapeutaController {
 
     @Autowired
@@ -27,12 +32,48 @@ public class TerapeutaController {
     
     @Autowired
     private RegionService regionService;
+    
+    
+    @Autowired
+    private ServicioService servicioService;
+
+    @Autowired
+    private ServicioTerapeutaService servicioTerapeutaService;
+
+    @GetMapping("/asociar-servicios")
+    public String mostrarFormularioAsociacion(Model model, Principal principal) {
+        String username = principal.getName();
+        Terapeuta terapeuta = terapeutaService.obtenerPorUsername(username);
+        
+        model.addAttribute("terapeuta", terapeuta);
+        model.addAttribute("servicios", servicioService.obtenerTodosLosServicios());
+        model.addAttribute("serviciosAsociados",servicioTerapeutaService.findServiciosByUserName(username)); // Método que devuelve los servicios asociados al terapeuta
+
+        return "asociar-servicios";  // Nombre de la vista HTML
+    }
+
+    @PostMapping("/asociar-servicios")
+    public String asociarServicios(@RequestParam List<String> serviciosSeleccionados, Principal principal) {
+        String username = principal.getName();
+        Terapeuta terapeuta = terapeutaService.obtenerPorUsername(username);
+        
+        servicioTerapeutaService.asociarServiciosATerapeuta(terapeuta, serviciosSeleccionados);
+
+        return "redirect:/terapeuta/asociar-servicios?success";  // Redirige con un mensaje de éxito
+    }
 
     // Endpoint para listar terapeutas con sus servicios
     @RequestMapping("/")
     public String obtenerTerapeutasConServicios(Model model) {
         model.addAttribute("terapeutas", terapeutaService.obtenerTerapeutasConServicios());
         return "terapeutas";  // Nombre de la plantilla que lista los terapeutas
+    }
+    
+        
+    @GetMapping("/especialidad/{id}/terapeutas")
+    public String obtenerTerapeutasPorEspecialidad(@PathVariable String id, Model model) {
+        model.addAttribute("terapeutas", terapeutaService.obtenerTerapeutasPorEspecialidad(id));
+        return "terapeutas";  
     }
 
     // Endpoint GET para mostrar el formulario de creación de un nuevo terapeuta

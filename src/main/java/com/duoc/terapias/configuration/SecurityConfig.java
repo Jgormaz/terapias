@@ -13,16 +13,16 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
+    
+    private final CustomAuthenticationSuccessHandler successHandler;
+
+    public SecurityConfig(CustomAuthenticationSuccessHandler successHandler) {
+        this.successHandler = successHandler;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-           /* .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/css/**", "/js/**").permitAll()  // Permite acceso libre a la página home y archivos estáticos
-                .requestMatchers("/especialidades").hasAnyRole("ADMIN", "TERAPEUTA") // Solo accesible para admin o terapeuta
-                .requestMatchers("/error").permitAll()
-                .anyRequest().authenticated() // Todas las demás rutas requieren autenticación
-            )*/
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/css/**", "/debug", "/js/**").permitAll()  // Solo permite página de inicio y estáticos
@@ -32,7 +32,8 @@ public class SecurityConfig {
     )
             .formLogin(login -> login
                 .loginPage("/login")
-                .defaultSuccessUrl("/", true)
+                //.defaultSuccessUrl("/", true)
+                .successHandler(successHandler)
                 .permitAll()
             )
             .logout(logout -> logout

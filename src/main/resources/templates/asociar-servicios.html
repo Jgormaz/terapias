@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Asociar Servicios</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2>Asociar Servicios a <span th:text="${terapeuta.nombre}"></span></h2>
+
+    <!-- Mensaje de éxito -->
+    <div th:if="${param.success}" class="alert alert-success">
+        Servicios asociados con éxito.
+    </div>
+
+    <form th:action="@{/terapeuta/asociar-servicios}" method="post">
+        <div class="mb-3">
+            <label><strong>Selecciona los servicios:</strong></label>
+            <div th:each="servicio : ${servicios}" class="form-check">
+                
+                <input type="checkbox" name="serviciosSeleccionados" th:value="${servicio.idServicio}"  
+                           th:disabled="${serviciosAsociados.contains(servicio)}" 
+                           th:checked="${serviciosAsociados.contains(servicio)}" 
+                           class="form-check-input"/>
+                <label class="form-check-label" th:text="${servicio.nombre}"></label>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Asociar Servicios</button>
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

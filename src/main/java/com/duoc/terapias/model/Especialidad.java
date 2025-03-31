@@ -9,6 +9,7 @@ import java.util.List;
 public class Especialidad {
     @Id
     @Column(name = "ID_especialidad")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private String idEspecialidad;
     
     private String nombre;

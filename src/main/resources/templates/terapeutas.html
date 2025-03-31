@@ -23,12 +23,12 @@
                 <!-- Iteramos sobre la lista de terapeutas -->
                 <tr th:each="terapeuta : ${terapeutas}">
                     <td th:text="${terapeuta.nombre}"></td>
-                    <td th:text="${terapeuta.apePaterno} + ' ' + ${terapeuta.apeMaterno}"></td>
+                    <td th:text="${terapeuta.ape_paterno} + ' ' + ${terapeuta.ape_materno}"></td>
                     <td th:text="${terapeuta.evaluacion}"></td>
                     <td>
                         <!-- Iteramos sobre los servicios que presta el terapeuta -->
                         <ul>
-                            <li th:each="servicio : ${terapeuta.servicios}" th:text="${servicio}"></li>
+                            <li th:each="servicioTerapeuta : ${terapeuta.servicios}" th:text="${servicioTerapeuta.servicio.nombre}"></li>
                         </ul>
                     </td>
                 </tr>
