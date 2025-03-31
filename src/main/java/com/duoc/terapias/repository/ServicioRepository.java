@@ -9,5 +9,7 @@ import java.util.List;
 @Repository
 public interface ServicioRepository extends JpaRepository<Servicio, String> {
     List<Servicio> findByEspecialidad_IdEspecialidad(String idEspecialidad);
+    //List<Servicio> findAllById(List<String> serviciosIds);
+    //List<Servicio> findAll();
 }
 

@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/especialidades")
@@ -40,6 +41,30 @@ public class EspecialidadController {
     
     @PostMapping("/guardar")
     public String guardarEspecialidad(@ModelAttribute Especialidad especialidad,
+                                  @RequestParam("idsServicios") List<String> idsServicios,
+                                  @RequestParam("nombresServicios") List<String> nombresServicios,
+                                  @RequestParam("descripcionesServicios") List<String> descripcionesServicios) {
+        List<Servicio> servicios = new ArrayList<>();
+
+        for (int i = 0; i < idsServicios.size(); i++) {
+            Servicio servicio = new Servicio();
+            if (idsServicios.get(i).isEmpty()) {
+                servicio.setIdServicio(UUID.randomUUID().toString());  // Genera un nuevo UUID si no tiene ID
+            } else {
+                servicio.setIdServicio(idsServicios.get(i));  // Usa el ID si es proporcionado
+            }
+            servicio.setNombre(nombresServicios.get(i));
+            servicio.setDescripcion(descripcionesServicios.get(i));
+            servicio.setEspecialidad(especialidad);  // Relacionamos el servicio con la especialidad
+            servicios.add(servicio);
+        }
+
+        especialidad.setServicios(servicios);
+        especialidadService.guardar(especialidad);
+
+        return "redirect:/especialidades";
+    }
+   /* public String guardarEspecialidad(@ModelAttribute Especialidad especialidad,
                                       @RequestParam("idsServicios") List<String> idsServicios,
                                       @RequestParam("nombresServicios") List<String> nombresServicios,
                                       @RequestParam("descripcionesServicios") List<String> descripcionesServicios) {
@@ -58,7 +83,7 @@ public class EspecialidadController {
         especialidadService.guardar(especialidad);
 
         return "redirect:/especialidades";
-    }
+    }*/
     
     @PostMapping("/eliminar/{id}")
     public String eliminarEspecialidad(@PathVariable String id) {

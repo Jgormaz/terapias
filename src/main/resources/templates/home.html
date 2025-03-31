@@ -48,11 +48,10 @@
 <nav>
     <ul>
         
-        <li><a th:href="@{/login(role='admin')}">Admin</a></li>
-        <li><a th:href="@{/login(role='terapeuta')}">Terapeuta</a></li>
+        <li><a th:href="@{/login(role='admin')}">Login Admin</a></li>
+        <li><a th:href="@{/login(role='terapeuta')}">Login Terapeuta</a></li>
         <li sec:authorize="hasAnyAuthority('ROLE_ADMIN', 'ROLE_TERAPEUTA')">
-            <a th:href="@{/especialidades}">Especialidades</a>
-            <a th:href="@{/servicios}">Servicio</a>
+            <a th:href="@{/especialidades}">Editar especialidades (sólo usuario Admin)</a>
         </li>
     </ul>
 </nav>
@@ -63,6 +62,9 @@
     <h2>Especialidades y sus Terapias</h2>
 
     <div th:each="especialidad : ${especialidades}" class="acordeon-item">
+        <a th:href="@{/terapeuta/especialidad/{id}/terapeutas(id=${especialidad.idEspecialidad})}">
+            <button class="btn btn-primary mt-2">Agenda</button>
+        </a>   
         <!-- Encabezado del acordeón -->
         <div class="acordeon-header" th:onclick="|toggleAcordeon('body-__${especialidad.idEspecialidad}__')|">
             <span th:text="${especialidad.nombre}"></span>

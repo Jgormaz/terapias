@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 @Service
 public class TerapeutaService {
@@ -19,7 +20,16 @@ public class TerapeutaService {
     public TerapeutaService(TerapeutaRepository terapeutaRepository) {
         this.terapeutaRepository = terapeutaRepository;
     }
-    /**
+    
+    public Terapeuta obtenerPorUsername(String username) {
+        return terapeutaRepository.findByUserName(username)
+                .orElseThrow(() -> new UsernameNotFoundException("No se encontró el terapeuta"));
+    }
+    
+    public List<Terapeuta> obtenerTerapeutasPorEspecialidad(String especialidadId) {
+        return terapeutaRepository.findByEspecialidadId(especialidadId);
+    }
+        /**
      * Obtiene la lista de terapeutas con nombre, apellidos, evaluación y lista de servicios que prestan.
      * @return Lista de terapeutas con los datos requeridos.
      */

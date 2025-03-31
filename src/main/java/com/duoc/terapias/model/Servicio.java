@@ -9,6 +9,7 @@ public class Servicio {
 
     @Id
     //@GeneratedValue(strategy = GenerationType.IDENTITY) // O GenerationType.UUID si es un String
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID_servicio")
     private String idServicio;
     
