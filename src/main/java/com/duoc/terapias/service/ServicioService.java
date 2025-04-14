@@ -43,7 +43,7 @@ public class ServicioService {
         servicioRepository.deleteById(id);
     }*/
     
-    public void eliminarServicio(String id) {
+    public void eliminarPorId(String id) {
         // Eliminar las asociaciones antes de eliminar el servicio
         List<ServicioTerapeuta> asociaciones = servicioTerapeutaRepository.findByServicio_IdServicio(id);  // Método que obtiene las asociaciones por el ID del servicio
         for (ServicioTerapeuta asociacion : asociaciones) {
@@ -53,5 +53,7 @@ public class ServicioService {
         // Ahora se puede eliminar el servicio
         servicioRepository.deleteById(id);
     }
+    
+ 
 }
 

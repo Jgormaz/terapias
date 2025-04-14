@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Listado de Terapeutas</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f3f3f3;
+        }
+
+        h2 {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Listado de Terapeutas</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Apellido Paterno</th>
+                <th>Apellido Materno</th>
+                <th>Usuario</th>
+                <th>Habilitado</th>
+                <th>Evaluación</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="terapeuta : ${terapeutas}">
+                <td th:text="${terapeuta.nombre}">Nombre</td>
+                <td th:text="${terapeuta.ape_paterno}">Apellido Paterno</td>
+                <td th:text="${terapeuta.ape_materno}">Apellido Materno</td>
+                <td th:text="${terapeuta.userName}">user</td>
+                <td th:text="${terapeuta.enabled ? 'Sí' : 'No'}">true</td>
+                <td th:text="${terapeuta.evaluacion != null ? terapeuta.evaluacion : 'N/A'}">Evaluación</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="/" style="display:inline-block; margin-top: 20px;">Volver al inicio</a>
+</body>
+</html>
+

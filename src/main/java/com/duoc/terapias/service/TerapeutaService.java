@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 @Service
@@ -64,6 +65,20 @@ public class TerapeutaService {
     public void guardar(Terapeuta terapeuta) {
         terapeutaRepository.save(terapeuta);
     }   
+
+    public List<Terapeuta> obtenerTodos() {
+        return terapeutaRepository.findAll();
+    }
+
+    public Terapeuta obtenerPorId(String id) {
+        Optional<Terapeuta> optional = terapeutaRepository.findById(id);
+        return optional.orElse(null);
+    }
+
+    public void eliminarPorId(String id) {
+        terapeutaRepository.deleteById(id);
+    }
+
 
 }
 

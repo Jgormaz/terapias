@@ -3,105 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <title>Especialidades</title>
-    <link rel="stylesheet" href="/css/styles.css">
     <script>
-        function agregarServicio() {
-            let container = document.getElementById("servicios-container");
-            let div = document.createElement("div");
-            div.classList.add("servicio");
-            div.innerHTML = `
-                <label>ID Servicio:</label>
-                <input type="text" name="idsServicios" required />
-                <br>
-                <label>Nombre Servicio:</label>
-                <input type="text" name="nombresServicios" required />
-                <br>
-                <label>Descripción Servicio:</label>
-                <input type="text" name="descripcionesServicios" required />
-                <br>
-                <button type="button" onclick="eliminarServicio(this)">Eliminar</button>
-                <hr>
-            `;
-            container.appendChild(div);
-        }
-
-        function eliminarServicio(button) {
-            button.parentElement.remove();
-        }
+        document.addEventListener("DOMContentLoaded", function () {
+            const botones = document.querySelectorAll('.btn-toggle-servicios');
+            botones.forEach(boton => {
+                boton.addEventListener('click', function () {
+                    const id = this.getAttribute('data-id');
+                    const divServicios = document.getElementById('servicios-' + id);
+                    if (divServicios) {
+                        divServicios.style.display = (divServicios.style.display === 'none') ? 'block' : 'none';
+                    }
+                });
+            });
+        });
     </script>
 </head>
 <body>
-    <h2>Lista de Especialidades</h2>
-    
-    <table border="1">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Descripción</th>
-                <th>Servicios</th>
-                <th sec:authorize="hasRole('ROLE_ADMIN')">Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="especialidad : ${especialidades}">
-                <td th:text="${especialidad.idEspecialidad}"></td>
-                <td th:text="${especialidad.nombre}"></td>
-                <td th:text="${especialidad.descripcion}"></td>
-                <td>
-                    <ul>
-                        <li th:each="servicio : ${especialidad.servicios}" th:text="${servicio.nombre}"></li>
-                    </ul>
-                </td>
-                <td sec:authorize="hasRole('ROLE_ADMIN')">
-                    <a th:href="@{/especialidades/editar/{id}(id=${especialidad.idEspecialidad})}">Editar</a> |
-                    <form th:action="@{/especialidades/eliminar/{id}(id=${especialidad.idEspecialidad})}" method="post" style="display:inline;">
-                        <input type="hidden" name="_method" value="delete" />
-                        <button type="submit" onclick="return confirm('¿Estás seguro?');">Eliminar</button>
-                    </form>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    
-    <div sec:authorize="hasRole('ROLE_ADMIN')">
-        <h3>Agregar Nueva Especialidad</h3>
-        <form th:action="@{/especialidades/guardar}" method="post" th:object="${especialidad}">
-            <label>ID:</label>
-            <input type="text" th:field="*{idEspecialidad}" required />
-            <br>
-            <label>Nombre:</label>
-            <input type="text" th:field="*{nombre}" required />
-            <br>
-            <label>Descripción:</label>
-            <input type="text" th:field="*{descripcion}" required />
-            <br><br>
-            
-            <h4>Servicios</h4>
-            <div id="servicios-container">
-                <div class="servicio">
-                    <label>ID Servicio:</label>
-                    <input type="text" name="idsServicios" required />
-                    <br>
-                    <label>Nombre Servicio:</label>
-                    <input type="text" name="nombresServicios" required />
-                    <br>
-                    <label>Descripción Servicio:</label>
-                    <input type="text" name="descripcionesServicios" required />
-                    <br>
-                    <button type="button" onclick="eliminarServicio(this)">Eliminar</button>
-                    <hr>
-                </div>
+
+<h2>Lista de Especialidades</h2>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>Nombre</th>
+        <th>Descripción</th>
+        <th>Servicios</th>
+        <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="esp : ${especialidades}">
+        <td th:text="${esp.nombre}"></td>
+        <td th:text="${esp.descripcion}"></td>
+        <td>
+            <button type="button" class="btn-toggle-servicios" th:attr="data-id=${esp.idEspecialidad}">
+                Ver servicios
+            </button>
+
+            <!-- Div para servicios -->
+            <div th:id="'servicios-' + ${esp.idEspecialidad}" style="display:none; margin-top:10px;">
+                <table border="1" style="margin-top:10px;">
+                    <thead>
+                    <tr>
+                        <th>Nombre del Servicio</th>
+                        <th>Descripción</th>
+                        <th>Acción</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="serv : ${esp.servicios}">
+                        <td th:text="${serv.nombre}"></td>
+                        <td th:text="${serv.descripcion}"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <form th:action="@{/especialidades/agregarServicio}" method="post">
+                                <input type="hidden" name="idEspecialidad" th:value="${esp.idEspecialidad}" />
+                                <input type="text" name="nombre" placeholder="Nombre del servicio" required />
+                                <input type="text" name="descripcion" placeholder="Descripción" required />
+                                <button type="submit">Agregar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
-            <button type="button" onclick="agregarServicio()">Agregar Servicio</button>
-            <br><br>
-            <button type="submit">Guardar</button>
-        </form>
-    </div>
-    
-    <br>
-    <a href="/">Volver al inicio</a>
+        </td>
+        <td>
+            <a th:href="@{/especialidades/editar/{id}(id=${esp.idEspecialidad})}">Editar</a>
+            <a th:href="@{/especialidades/eliminar/{id}(id=${esp.idEspecialidad})}">Eliminar</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Formulario para nueva especialidad -->
+<h3>Agregar Nueva Especialidad</h3>
+<form th:action="@{/especialidades/guardar}" th:object="${especialidad}" method="post">
+    <label>Nombre:</label>
+    <input type="text" th:field="*{nombre}" placeholder="Nombre de la especialidad" required />
+    <br />
+    <label>Descripción:</label>
+    <input type="text" th:field="*{descripcion}" placeholder="Descripción" required />
+    <br />
+    <button type="submit">Guardar</button>
+</form>
+
 </body>
 </html>
-
-

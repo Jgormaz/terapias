@@ -1,3 +1,4 @@
+<<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -18,53 +19,54 @@
         <input type="text" th:field="*{descripcion}" required />
 
         <h3>Servicios:</h3>
-        <div id="servicios-container">
-            <!-- Listar los servicios existentes -->
-            <div th:each="servicio, stat : *{servicios}">
-                <!-- Campo oculto para el ID del servicio -->
-                <label>ID del Servicio:</label>
-                <input type="text" th:field="*{servicios[__${stat.index}__].idServicio}" required />
+        <div th:each="servicio, stat : *{servicios}" style="margin-bottom: 1em;" class="servicio-item">
 
-                <label>Nombre del Servicio:</label>
-                <input type="text" th:field="*{servicios[__${stat.index}__].nombre}" required />
+            <input type="hidden" th:field="*{servicios[__${stat.index}__].idServicio}" />
 
-                <button type="button" th:onclick="|eliminarServicio(this)|">Eliminar</button>
-            </div>
+            <label>Nombre del Servicio:</label>
+            <input type="text" th:name="'servicios[' + ${stat.index} + '].nombre'"
+                          th:value="${servicio.nombre}" required />
+
+            <label>Descripción:</label>
+            <input type="text" th:name="'servicios[' + ${stat.index} + '].descripcion'"
+                          th:value="${servicio.descripcion}" />
+
+            <!-- Botón para eliminar servicio por AJAX -->
+            <button type="button"
+                    th:attr="onclick=|eliminarServicio('${servicio.idServicio}', '${especialidad.idEspecialidad}', this)|">
+                Eliminar
+            </button>
         </div>
-
-        <!-- Botón para agregar un nuevo servicio -->
-        <button type="button" onclick="agregarServicio()">Agregar Servicio</button>
 
         <button type="submit">Actualizar</button>
     </form>
 
     <a href="/especialidades">Cancelar</a>
 
-    <script type="text/javascript">
-        // Función para agregar un nuevo servicio dinámicamente
-        function agregarServicio() {
-            const container = document.getElementById('servicios-container');
-            const index = container.children.length;
+    <!-- Script para eliminar sin recargar la página -->
+    <script>
+        function eliminarServicio(idServicio, idEspecialidad, boton) {
+            if (!confirm('¿Eliminar este servicio?')) return;
 
-            const newService = document.createElement('div');
-            newService.innerHTML = `
-                <label>ID del Servicio:</label>
-                <input type="text" name="servicios[${index}].idServicio" required />
-
-                <label>Nombre del Servicio:</label>
-                <input type="text" name="servicios[${index}].nombre" required />
-
-                <button type="button" onclick="eliminarServicio(this)">Eliminar</button>
-            `;
-
-            container.appendChild(newService);
-        }
-
-        // Función para eliminar un servicio del formulario
-        function eliminarServicio(button) {
-            button.parentElement.remove();
+            fetch('/especialidades/eliminarServicio', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `idServicio=${idServicio}&idEspecialidad=${idEspecialidad}`
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Eliminar visualmente el bloque de servicio
+                    const contenedor = boton.closest('.servicio-item');
+                    contenedor.remove();
+                } else {
+                    alert("Error al eliminar el servicio.");
+                }
+            });
         }
     </script>
+
 </body>
 </html>
 

@@ -28,6 +28,7 @@ public class SecurityConfig {
                 .requestMatchers("/", "/css/**", "/debug", "/js/**").permitAll()  // Solo permite página de inicio y estáticos
                 .requestMatchers("/especialidades").authenticated() // Requiere login
                 .requestMatchers("/especialidades/**").hasRole("ADMIN") // Solo Admin puede modificar
+                .requestMatchers("/terapeuta/terapeutas/nuevo", "/terapeuta/terapeutas/save").hasRole("ADMIN") // Solo Admin puede modificar
                 .anyRequest().authenticated() // TODO lo demás requiere autenticación
     )
             .formLogin(login -> login
