@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Editar Terapeuta</title>
+  <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+</head>
+<body>
+  <div class="container mt-4">
+    <h1>Editar Terapeuta</h1>
+    
+    <form th:action="@{/terapeuta/editar/{id}(id=${terapeuta.ID_terapeuta})}" 
+          th:object="${terapeuta}" method="post">
+
+      <!-- Nombre -->
+      <div class="form-group">
+        <label for="nombre">Nombre</label>
+        <input type="text" th:field="*{nombre}" class="form-control" id="nombre">
+      </div>
+
+      <!-- Apellido Paterno -->
+      <div class="form-group">
+        <label for="ape_paterno">Apellido Paterno</label>
+        <input type="text" th:field="*{ape_paterno}" class="form-control" id="ape_paterno">
+      </div>
+
+      <!-- Apellido Materno -->
+      <div class="form-group">
+        <label for="ape_materno">Apellido Materno</label>
+        <input type="text" th:field="*{ape_materno}" class="form-control" id="ape_materno">
+      </div>
+
+      <!-- Dirección Principal -->
+      <div class="form-group">
+        <label for="direccion_principal">Dirección</label>
+        <input type="text" th:field="*{direccion_principal}" class="form-control" id="direccion_principal">
+      </div>
+
+      <!-- Username -->
+      <div class="form-group">
+        <label for="userName">Correo (Username)</label>
+        <input type="email" th:field="*{userName}" class="form-control" id="userName">
+      </div>
+
+      <!-- Contraseña (opcional en edición) -->
+      <div class="form-group">
+        <label for="password">Contraseña (dejar en blanco si no desea cambiarla)</label>
+        <input type="password" th:field="*{password}" class="form-control" id="password">
+      </div>
+
+      <!-- Activo -->
+      <div class="form-group form-check">
+        <input type="checkbox" th:field="*{enabled}" class="form-check-input" id="enabled">
+        <label class="form-check-label" for="enabled">Activo</label>
+      </div>
+
+      <!-- Teléfono -->
+      <div class="form-group">
+        <label for="telefono">Teléfono</label>
+        <input type="text" th:field="*{telefono}" class="form-control" id="telefono">
+      </div>
+
+      <!-- Correo -->
+      <div class="form-group">
+        <label for="correo">Correo Electrónico</label>
+        <input type="email" th:field="*{correo}" class="form-control" id="correo">
+      </div>
+
+      <!-- Evaluación -->
+      <div class="form-group">
+        <label for="evaluacion">Evaluación</label>
+        <input type="number" th:field="*{evaluacion}" class="form-control" id="evaluacion">
+      </div>
+
+      <!-- Foto -->
+      <div class="form-group">
+        <label for="url_foto">URL Foto</label>
+        <input type="text" th:field="*{url_foto}" class="form-control" id="url_foto">
+      </div>
+
+      <!-- Comuna -->
+      <div class="form-group">
+        <label for="comuna">Comuna</label>
+        <select name="comuna" class="form-control" id="comuna">
+          <option value="" disabled>Seleccione una comuna</option>
+          <option th:each="comuna : ${comunas}" 
+                  th:value="${comuna.ID_comuna}" 
+                  th:text="${comuna.nombre}"
+                  th:selected="${comuna.ID_comuna == terapeuta.comuna?.ID_comuna}">
+          </option>
+        </select>
+      </div>
+
+      <!-- Región -->
+      <div class="form-group">
+        <label for="region">Región</label>
+        <select name="region" class="form-control" id="region">
+          <option value="" disabled>Seleccione una región</option>
+          <option th:each="region : ${regiones}" 
+                  th:value="${region.ID_region}" 
+                  th:text="${region.nombre}"
+                  th:selected="${region.ID_region == terapeuta.region?.ID_region}">
+          </option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-primary mt-3">Guardar Cambios</button>
+    </form>
+  </div>
+</body>
+</html>

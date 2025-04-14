@@ -40,6 +40,13 @@ public class TerapeutaController {
     @Autowired
     private ServicioTerapeutaService servicioTerapeutaService;
 
+    @GetMapping("/lista-terapeutas")
+    public String listarTerapeutasBasico(Model model) {
+        List<Terapeuta> terapeutas = terapeutaService.obtenerTodos(); // Asegúrate de que exista este método en tu service
+        model.addAttribute("terapeutas", terapeutas);
+        return "lista-terapeutas";
+    }
+    
     @GetMapping("/asociar-servicios")
     public String mostrarFormularioAsociacion(Model model, Principal principal) {
         String username = principal.getName();
@@ -106,4 +113,46 @@ public class TerapeutaController {
         terapeutaService.guardar(terapeuta);
         return "redirect:/";  // Redirige a la lista de terapeutas tras guardar
     }
+    
+    // Mostrar formulario de edición de terapeuta
+    @GetMapping("/editar/{id}")
+    public String mostrarFormularioEdicion(@PathVariable("id") String id, Model model) {
+        Terapeuta terapeuta = terapeutaService.obtenerPorId(id);
+        if (terapeuta == null) {
+            return "redirect:/terapeuta/?error";  // o una página de error específica
+        }
+
+        model.addAttribute("terapeuta", terapeuta);
+        model.addAttribute("comunas", comunaService.obtenerTodas());
+        model.addAttribute("regiones", regionService.obtenerTodas());
+
+        return "editar-terapeuta";  // Debes crear esta vista similar a nuevo-terapeuta.html
+    }
+
+    // Guardar terapeuta editado
+    @PostMapping("/editar/{id}")
+    public String actualizarTerapeuta(
+            @PathVariable("id") String id,
+            @ModelAttribute("terapeuta") Terapeuta terapeutaActualizado,
+            @RequestParam("comuna") String idComuna,
+            @RequestParam("region") String idRegion) {
+
+        Comuna comuna = comunaService.buscarPorId(idComuna);
+        Region region = regionService.buscarPorId(idRegion);
+
+        terapeutaActualizado.setComuna(comuna);
+        terapeutaActualizado.setRegion(region);
+        terapeutaActualizado.setID_terapeuta(id); // Asegura mantener el ID original
+
+        terapeutaService.guardar(terapeutaActualizado);
+        return "redirect:/terapeuta/";
+    }
+
+    // Eliminar terapeuta
+    @GetMapping("/eliminar/{id}")
+    public String eliminarTerapeuta(@PathVariable("id") String id) {
+        terapeutaService.eliminarPorId(id);
+        return "redirect:/terapeuta/";
+    }
+
 }

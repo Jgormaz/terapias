@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 @Repository
-public interface TerapeutaRepository extends JpaRepository<Terapeuta, Long> {
+public interface TerapeutaRepository extends JpaRepository<Terapeuta, String> {
     Optional<Terapeuta> findByUserName(String userName);
     
     @Query("SELECT DISTINCT t FROM Terapeuta t " +

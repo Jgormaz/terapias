@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class EspecialidadService {
@@ -26,11 +25,33 @@ public class EspecialidadService {
         return especialidadRepository.findById(id);
     }
     
-    /*public Especialidad guardar(Especialidad especialidad) {
+    public Especialidad guardar(Especialidad especialidad) {
+        if (especialidad.getServicios() != null) {
+            for (Servicio servicio : especialidad.getServicios()) {
+                servicio.setEspecialidad(especialidad);
+            }
+        }
+        System.out.println("Guardando especialidad con ID: " + especialidad.getIdEspecialidad());
         return especialidadRepository.save(especialidad);
-    }*/
+    }
     
-    @Transactional
+    public void agregarServicioAEspecialidad(String idEspecialidad, String id, String nombre, String descripcion) {
+        Optional<Especialidad> opt = especialidadRepository.findById(idEspecialidad);
+        if (opt.isPresent()) {
+            Especialidad esp = opt.get();
+            Servicio nuevo = new Servicio();
+            nuevo.setIdServicio(id);
+            nuevo.setNombre(nombre);
+            nuevo.setDescripcion(descripcion);
+            nuevo.setEspecialidad(esp); 
+          
+
+            esp.getServicios().add(nuevo);
+            especialidadRepository.save(esp);
+        }
+    }
+    
+    /*@Transactional
     public Especialidad guardar(Especialidad especialidad) {
         Especialidad especialidadExistente = especialidadRepository.findById(especialidad.getIdEspecialidad())
                 .orElseThrow(() -> new IllegalArgumentException("Especialidad no encontrada"));
@@ -51,7 +72,7 @@ public class EspecialidadService {
         especialidadExistente.setDescripcion(especialidad.getDescripcion());
 
         return especialidadRepository.save(especialidadExistente);
-    }
+    }*/
 
     
     public void eliminar(String id) {
