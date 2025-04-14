@@ -5,17 +5,27 @@ package com.duoc.terapias.service;
 import com.duoc.terapias.model.Especialidad;
 import com.duoc.terapias.model.Servicio;
 import com.duoc.terapias.repository.EspecialidadRepository;
+import com.duoc.terapias.repository.ServicioRepository;
+import com.duoc.terapias.repository.TerapeutaRepository;
+import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class EspecialidadService {
     
     @Autowired
     private EspecialidadRepository especialidadRepository;
+    
+    @Autowired
+    private TerapeutaRepository terapeutaRepository;
+    
+    @Autowired
+    private ServicioRepository servicioRepository;
     
     public List<Especialidad> obtenerTodas() {
         return especialidadRepository.findAll();
@@ -75,7 +85,24 @@ public class EspecialidadService {
     }*/
 
     
-    public void eliminar(String id) {
-        especialidadRepository.deleteById(id);
+    @Transactional
+    public void eliminar(String idEspecialidad) {
+        Optional<Especialidad> optional = especialidadRepository.findById(idEspecialidad);
+        if (optional.isPresent()) {
+            Especialidad especialidad = optional.get();
+
+            // Elimina primero las relaciones en servicioterapeuta
+             for (Servicio servicio : new ArrayList<>(especialidad.getServicios())) {
+                terapeutaRepository.deleteByServicio(servicio); // 
+                // Quitar servicio de la especialidad y eliminarlo
+                especialidad.removeServicio(servicio);
+                servicioRepository.delete(servicio);
+            }
+
+            // Luego elimina la especialidad (con sus servicios en cascada)
+            especialidadRepository.delete(especialidad);
+        }
     }
+    
+
 }
