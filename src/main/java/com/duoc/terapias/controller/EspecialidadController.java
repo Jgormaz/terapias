@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/especialidades")
@@ -75,7 +76,15 @@ public class EspecialidadController {
     public String actualizarEspecialidad(@ModelAttribute Especialidad especialidad) {
         if (especialidad.getServicios() == null) {
             especialidad.setServicios(new ArrayList<>());
+        } else {
+            // Filtra servicios válidos (evita insertar servicios sin ID)
+            especialidad.setServicios(
+                especialidad.getServicios().stream()
+                    .filter(servicio -> servicio.getIdServicio() != null && !servicio.getIdServicio().isEmpty())
+                    .collect(Collectors.toList())
+            );
         }
+
         especialidadService.guardar(especialidad);
         return "redirect:/especialidades";
     }
