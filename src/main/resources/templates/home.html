@@ -134,10 +134,15 @@
         </div>
     </div>
     <ul>
-        <li sec:authorize="!isAuthenticated()"><a th:href="@{/login(role='admin')}">Login Admin</a></li>
-        <li sec:authorize="!isAuthenticated()"><a th:href="@{/login(role='terapeuta')}">Login Terapeuta</a></li>
+        <li sec:authorize="!isAuthenticated()">
+            <a th:href="@{'/login-role'}">Login</a>
+        </li>
 
-        <li sec:authorize="hasAnyAuthority('ROLE_ADMIN', 'ROLE_TERAPEUTA')">
+
+        <li sec:authorize="hasAnyAuthority('ROLE_TERAPEUTA')">
+            <a th:href="@{/terapeuta/asociar-servicios}">Servicios</a>
+        </li>
+        <li sec:authorize="hasAnyAuthority('ROLE_ADMIN')">
             <a th:href="@{/especialidades}">Editar especialidades</a>
         </li>
         <li sec:authorize="hasAuthority('ROLE_ADMIN')">

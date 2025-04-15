@@ -25,15 +25,15 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/css/**", "/debug", "/js/**").permitAll()  // Solo permite página de inicio y estáticos
+                .requestMatchers("/","/terapeuta/especialidad/**","/css/**", "/debug", "/js/**").permitAll()  // Solo permite página de inicio y estáticos
                 .requestMatchers("/especialidades").authenticated() // Requiere login
                 .requestMatchers("/especialidades/**").hasRole("ADMIN") // Solo Admin puede modificar
                 .requestMatchers("/terapeuta/terapeutas/nuevo", "/terapeuta/terapeutas/save").hasRole("ADMIN") // Solo Admin puede modificar
                 .anyRequest().authenticated() // TODO lo demás requiere autenticación
     )
             .formLogin(login -> login
-                .loginPage("/login")
-                //.defaultSuccessUrl("/", true)
+                .loginPage("/login-role")                // <-- CAMBIA la ruta de login
+                .loginProcessingUrl("/perform_login")      // <-- Donde se envía el POST del formulario
                 .successHandler(successHandler)
                 .permitAll()
             )
