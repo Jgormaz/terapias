@@ -25,6 +25,11 @@ public interface TerapeutaRepository extends JpaRepository<Terapeuta, String> {
     @Modifying
     @Query("DELETE FROM ServicioTerapeuta st WHERE st.servicio = :servicio")
     void deleteByServicio(@Param("servicio") Servicio servicio);
+    
+    @Modifying
+    @Query("UPDATE Terapeuta t SET t.enabled = :enabled WHERE t.ID_terapeuta = :id")
+    void updateEnabledStatus(@Param("id") String id, @Param("enabled") boolean enabled);
+
 
 
 

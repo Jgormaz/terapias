@@ -1,72 +1,97 @@
-<<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Editar Especialidad</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-    <h2>Editar Especialidad</h2>
+<body class="bg-light">
 
-    <form th:action="@{/especialidades/actualizar}" method="post" th:object="${especialidad}">
-        <!-- Campo oculto con el ID de la especialidad -->
-        <input type="hidden" th:field="*{idEspecialidad}"/>
+<div class="container my-5">
+    <div class="card shadow">
+        <div class="card-body">
+            <h2 class="card-title mb-4 text-center">Editar Especialidad</h2>
 
-        <label>Nombre:</label>
-        <input type="text" th:field="*{nombre}" required />
+            <form th:action="@{/especialidades/actualizar}" method="post" th:object="${especialidad}">
+                <input type="hidden" th:field="*{idEspecialidad}"/>
 
-        <label>Descripción:</label>
-        <input type="text" th:field="*{descripcion}" required />
+                <div class="mb-3">
+                    <label class="form-label">Nombre:</label>
+                    <input type="text" th:field="*{nombre}" class="form-control" required />
+                </div>
 
-        <h3>Servicios:</h3>
-        <div th:each="servicio, stat : *{servicios}" style="margin-bottom: 1em;" class="servicio-item">
+                <div class="mb-4">
+                    <label class="form-label">Descripción:</label>
+                    <input type="text" th:field="*{descripcion}" class="form-control" required />
+                </div>
 
-            <input type="hidden" th:field="*{servicios[__${stat.index}__].idServicio}" />
+                <h4 class="mb-3">Servicios</h4>
 
-            <label>Nombre del Servicio:</label>
-            <input type="text" th:name="'servicios[' + ${stat.index} + '].nombre'"
-                          th:value="${servicio.nombre}" required />
+                <div th:each="servicio, stat : *{servicios}" class="border rounded p-3 mb-3 bg-white servicio-item">
+                    <input type="hidden" th:field="*{servicios[__${stat.index}__].idServicio}" />
 
-            <label>Descripción:</label>
-            <input type="text" th:name="'servicios[' + ${stat.index} + '].descripcion'"
-                          th:value="${servicio.descripcion}" />
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Nombre del Servicio:</label>
+                            <input type="text" class="form-control"
+                                   th:name="'servicios[' + ${stat.index} + '].nombre'"
+                                   th:value="${servicio.nombre}" required />
+                        </div>
 
-            <!-- Botón para eliminar servicio por AJAX -->
-            <button type="button"
-                    th:attr="onclick=|eliminarServicio('${servicio.idServicio}', '${especialidad.idEspecialidad}', this)|">
-                Eliminar
-            </button>
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Descripción:</label>
+                            <input type="text" class="form-control"
+                                   th:name="'servicios[' + ${stat.index} + '].descripcion'"
+                                   th:value="${servicio.descripcion}" />
+                        </div>
+                    </div>
+
+                    <div class="text-end">
+                        <button type="button" class="btn btn-outline-danger btn-sm"
+                                th:attr="onclick=|eliminarServicio('${servicio.idServicio}', '${especialidad.idEspecialidad}', this)|">
+                            Eliminar Servicio
+                        </button>
+                    </div>
+                </div>
+
+
+                <div class="d-flex justify-content-between">
+                    <a href="/especialidades" class="btn btn-secondary">Volver</a>
+                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                </div>
+            </form>
         </div>
+    </div>
+</div>
 
-        <button type="submit">Actualizar</button>
-    </form>
+<!-- Bootstrap JS + Script para eliminación por AJAX -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function eliminarServicio(idServicio, idEspecialidad, boton) {
+        if (!confirm('¿Eliminar este servicio?')) return;
 
-    <a href="/especialidades">Cancelar</a>
-
-    <!-- Script para eliminar sin recargar la página -->
-    <script>
-        function eliminarServicio(idServicio, idEspecialidad, boton) {
-            if (!confirm('¿Eliminar este servicio?')) return;
-
-            fetch('/especialidades/eliminarServicio', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: `idServicio=${idServicio}&idEspecialidad=${idEspecialidad}`
-            })
-            .then(response => {
-                if (response.ok) {
-                    // Eliminar visualmente el bloque de servicio
-                    const contenedor = boton.closest('.servicio-item');
-                    contenedor.remove();
-                } else {
-                    alert("Error al eliminar el servicio.");
-                }
-            });
-        }
-    </script>
+        fetch('/especialidades/eliminarServicio', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `idServicio=${idServicio}&idEspecialidad=${idEspecialidad}`
+        })
+        .then(response => {
+            if (response.ok) {
+                const contenedor = boton.closest('.servicio-item');
+                contenedor.remove();
+            } else {
+                alert("Error al eliminar el servicio.");
+            }
+        });
+    }
+</script>
 
 </body>
 </html>
+
 

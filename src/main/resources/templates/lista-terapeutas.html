@@ -3,56 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <title>Listado de Terapeutas</title>
-    <link rel="stylesheet" href="/css/styles.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 34px;
+            height: 20px;
         }
 
-        th, td {
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: left;
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
         }
 
-        th {
-            background-color: #f3f3f3;
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 50px;
         }
 
-        h2 {
-            margin-top: 20px;
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 12px;
+            width: 12px;
+            border-radius: 50px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+        }
+
+        input:checked + .slider {
+            background-color: #4CAF50;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(14px);
         }
     </style>
 </head>
 <body>
-    <h2>Listado de Terapeutas</h2>
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Listado de Terapeutas</h2>
 
-    <table>
+    <table class="table table-striped">
         <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Apellido Paterno</th>
-                <th>Apellido Materno</th>
-                <th>Usuario</th>
-                <th>Habilitado</th>
-                <th>Evaluación</th>
-            </tr>
+        <tr>
+            <th>Nombre</th>
+            <th>Apellido Paterno</th>
+            <th>Apellido Materno</th>
+            <th>Usuario</th>
+            <th>Habilitado</th>
+            <th>Evaluación</th>
+            <th>Acciones</th>
+        </tr>
         </thead>
         <tbody>
-            <tr th:each="terapeuta : ${terapeutas}">
-                <td th:text="${terapeuta.nombre}">Nombre</td>
-                <td th:text="${terapeuta.ape_paterno}">Apellido Paterno</td>
-                <td th:text="${terapeuta.ape_materno}">Apellido Materno</td>
-                <td th:text="${terapeuta.userName}">user</td>
-                <td th:text="${terapeuta.enabled ? 'Sí' : 'No'}">true</td>
-                <td th:text="${terapeuta.evaluacion != null ? terapeuta.evaluacion : 'N/A'}">Evaluación</td>
-            </tr>
+        <tr th:each="terapeuta : ${terapeutas}">
+            <td th:text="${terapeuta.nombre}">Nombre</td>
+            <td th:text="${terapeuta.ape_paterno}">Apellido Paterno</td>
+            <td th:text="${terapeuta.ape_materno}">Apellido Materno</td>
+            <td th:text="${terapeuta.userName}">Usuario</td>
+            <td>
+                <form th:action="@{/terapeuta/actualizarEstado}" method="post" th:id="'estado-form-' + ${terapeuta.ID_terapeuta}">
+                    <input type="hidden" name="id" th:value="${terapeuta.ID_terapeuta}" />
+                    <input type="hidden" name="enabled" th:value="${terapeuta.enabled}" />
+                    <label class="switch">
+                        <input type="checkbox"
+                               th:checked="${terapeuta.enabled}"
+                               th:attr="data-id=${terapeuta.ID_terapeuta}"
+                               onchange="actualizarEstado(this)">
+                        <span class="slider"></span>
+                    </label>
+                </form>
+            </td>
+            <td th:text="${terapeuta.evaluacion != null ? terapeuta.evaluacion : 'N/A'}">Evaluación</td>
+            <td>
+                <a th:href="@{/terapeutas/editar/{id}(id=${terapeuta.ID_terapeuta})}" class="btn btn-warning btn-sm">Editar</a>
+            </td>
+        </tr>
         </tbody>
     </table>
 
-    <a href="/" style="display:inline-block; margin-top: 20px;">Volver al inicio</a>
+    <a href="/" class="btn btn-primary mt-4">Volver al inicio</a>
+</div>
+
+<script>
+    function actualizarEstado(checkbox) {
+        const id = checkbox.getAttribute('data-id');
+        const form = document.getElementById('estado-form-' + id);
+        const hiddenEnabled = form.querySelector('input[name="enabled"]');
+
+        hiddenEnabled.value = checkbox.checked; // sincroniza el valor
+
+        const formData = new FormData(form);
+        checkbox.disabled = true;
+
+        fetch(form.action, {
+            method: 'POST',
+            body: formData
+        }).then(response => {
+            if (!response.ok) {
+                checkbox.checked = !checkbox.checked; // revertir visual si falla
+                alert("Error al actualizar estado");
+            }
+        }).catch(err => {
+            checkbox.checked = !checkbox.checked;
+            alert("Error de red");
+        }).finally(() => {
+            checkbox.disabled = false;
+        });
+    }
+</script>
 </body>
 </html>
+
+
+
 
