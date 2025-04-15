@@ -11,6 +11,7 @@ import com.duoc.terapias.service.ServicioTerapeutaService;
 import java.security.Principal;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/terapeuta")
@@ -39,6 +41,14 @@ public class TerapeutaController {
 
     @Autowired
     private ServicioTerapeutaService servicioTerapeutaService;
+    
+    @PostMapping("/actualizarEstado")
+    @ResponseBody // ← AÑADE ESTO si estás usando AJAX y no quieres redirección
+    public ResponseEntity<String> actualizarEstado(@RequestParam("id") String id,
+                                                   @RequestParam("enabled") boolean enabled) {
+        terapeutaService.actualizarEstado(id, enabled);
+        return ResponseEntity.ok("Estado actualizado");
+    }
 
     @GetMapping("/lista-terapeutas")
     public String listarTerapeutasBasico(Model model) {

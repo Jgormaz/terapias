@@ -22,6 +22,15 @@ public class TerapeutaService {
         this.terapeutaRepository = terapeutaRepository;
     }
     
+        @Transactional
+    public void actualizarEstado(String id, boolean nuevoEstado) {
+        Optional<Terapeuta> terapeutaOpt = terapeutaRepository.findById(id);
+        terapeutaOpt.ifPresent(terapeuta -> {
+            terapeuta.setEnabled(nuevoEstado);
+            terapeutaRepository.save(terapeuta);
+        });
+    }
+    
     public Terapeuta obtenerPorUsername(String username) {
         return terapeutaRepository.findByUserName(username)
                 .orElseThrow(() -> new UsernameNotFoundException("No se encontró el terapeuta"));
