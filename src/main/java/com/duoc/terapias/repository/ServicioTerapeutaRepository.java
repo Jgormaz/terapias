@@ -21,4 +21,10 @@ public interface ServicioTerapeutaRepository extends JpaRepository<ServicioTerap
     // Encuentra todos los servicios asociados a un terapeuta por su userName
     @Query("SELECT st.servicio FROM ServicioTerapeuta st JOIN st.terapeuta t WHERE t.userName = :userName")
     List<Servicio> findServiciosByUserName(@Param("userName") String userName);
+    
+    void deleteByTerapeuta_IdTerapeuta(String idTerapeuta);
+
 }
+
+
+

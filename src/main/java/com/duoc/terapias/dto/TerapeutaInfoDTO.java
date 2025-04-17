@@ -10,8 +10,18 @@ public class TerapeutaInfoDTO {
     private String apeMaterno;
     private Integer evaluacion;
     private List<String> servicios;  // Lista de pares nombre_especialidad:nombre_servicio
-
+    private boolean enabled;
     // Getters y Setters
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
 

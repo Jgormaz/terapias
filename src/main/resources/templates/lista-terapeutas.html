@@ -74,22 +74,29 @@
             <td th:text="${terapeuta.ape_materno}">Apellido Materno</td>
             <td th:text="${terapeuta.userName}">Usuario</td>
             <td>
-                <form th:action="@{/terapeuta/actualizarEstado}" method="post" th:id="'estado-form-' + ${terapeuta.ID_terapeuta}">
-                    <input type="hidden" name="id" th:value="${terapeuta.ID_terapeuta}" />
+                <form th:action="@{/terapeuta/actualizarEstado}" method="post" th:id="'estado-form-' + ${terapeuta.IdTerapeuta}">
+                    <input type="hidden" name="id" th:value="${terapeuta.IdTerapeuta}" />
                     <input type="hidden" name="enabled" th:value="${terapeuta.enabled}" />
                     <label class="switch">
                         <input type="checkbox"
                                th:checked="${terapeuta.enabled}"
-                               th:attr="data-id=${terapeuta.ID_terapeuta}"
+                               th:attr="data-id=${terapeuta.IdTerapeuta}"
                                onchange="actualizarEstado(this)">
                         <span class="slider"></span>
                     </label>
                 </form>
             </td>
             <td th:text="${terapeuta.evaluacion != null ? terapeuta.evaluacion : 'N/A'}">Evaluación</td>
-            <td>
-                <a th:href="@{/terapeutas/editar/{id}(id=${terapeuta.ID_terapeuta})}" class="btn btn-warning btn-sm">Editar</a>
+            <td class="d-flex gap-2">
+                <a th:href="@{/terapeuta/editar/{id}(id=${terapeuta.IdTerapeuta})}" class="btn btn-warning btn-sm">Editar</a>
+                <a th:href="@{/terapeuta/eliminar/{id}(id=${terapeuta.IdTerapeuta})}" 
+                   class="btn btn-danger btn-sm"
+                   onclick="return confirm('¿Estás seguro que deseas eliminar este terapeuta?');">
+                   Eliminar
+                </a>
             </td>
+
+
         </tr>
         </tbody>
     </table>

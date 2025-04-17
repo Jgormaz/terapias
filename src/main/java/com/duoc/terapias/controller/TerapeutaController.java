@@ -152,17 +152,23 @@ public class TerapeutaController {
 
         terapeutaActualizado.setComuna(comuna);
         terapeutaActualizado.setRegion(region);
-        terapeutaActualizado.setID_terapeuta(id); // Asegura mantener el ID original
+        terapeutaActualizado.setIdTerapeuta(id); // Asegura mantener el ID original
 
         terapeutaService.guardar(terapeutaActualizado);
-        return "redirect:/terapeuta/";
+        return "redirect:/terapeuta/lista-terapeutas";
     }
 
-    // Eliminar terapeuta
+    
     @GetMapping("/eliminar/{id}")
     public String eliminarTerapeuta(@PathVariable("id") String id) {
+        // Paso 1: Eliminar asociaciones
+        servicioTerapeutaService.eliminarPorIdTerapeuta(id);
+
+        // Paso 2: Eliminar terapeuta
         terapeutaService.eliminarPorId(id);
-        return "redirect:/terapeuta/";
+
+        return "redirect:/terapeuta/lista-terapeutas";
     }
+
 
 }

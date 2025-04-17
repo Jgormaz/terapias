@@ -10,6 +10,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface TerapeutaRepository extends JpaRepository<Terapeuta, String> {
@@ -27,8 +28,14 @@ public interface TerapeutaRepository extends JpaRepository<Terapeuta, String> {
     void deleteByServicio(@Param("servicio") Servicio servicio);
     
     @Modifying
-    @Query("UPDATE Terapeuta t SET t.enabled = :enabled WHERE t.ID_terapeuta = :id")
+    @Transactional
+    @Query("UPDATE Terapeuta t SET t.enabled = :enabled WHERE t.idTerapeuta = :id")
     void updateEnabledStatus(@Param("id") String id, @Param("enabled") boolean enabled);
+    
+    /*@Modifying
+    
+    @Query("UPDATE Terapeuta t SET t.enabled = :enabled WHERE t.idTerapeuta = :id")
+    void updateEnabledStatus(String id, boolean enabled);*/
 
 
 
