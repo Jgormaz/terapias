@@ -34,11 +34,11 @@ public class EspecialidadController {
         return "especialidades";
     }
     
-    @GetMapping("/nueva")
+   /* @GetMapping("/nueva")
     public String nuevaEspecialidad(Model model) {
         model.addAttribute("especialidad", new Especialidad());
         return "especialidad_form"; // Vista para crear especialidad con servicios
-    }
+    }*/
     
     @PostMapping("/guardar")
     public String guardarEspecialidad(@ModelAttribute Especialidad especialidad, Model model) {
