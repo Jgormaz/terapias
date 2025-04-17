@@ -5,7 +5,9 @@ for /F "tokens=5" %%a in ('netstat -aon ^| findstr :8080') do (
     taskkill /PID %%a /F
 )
 
-echo Iniciando la aplicación...
+echo Iniciando la aplicación como proceso separado...
 cd target
-start "" /B java -jar terapias-0.0.1-SNAPSHOT.jar > app.log 2>&1
-echo Aplicación desplegada en el puerto 8080.
+
+:: Ejecuta el .jar en segundo plano usando PowerShell
+powershell -Command "Start-Process -FilePath 'java' -ArgumentList '-jar terapias-0.0.1-SNAPSHOT.jar' -WindowStyle Hidden -RedirectStandardOutput 'app.log' -RedirectStandardError 'error.log'"
+
