@@ -8,6 +8,7 @@ import com.duoc.terapias.repository.ServicioTerapeutaRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ServicioTerapeutaService {
@@ -17,6 +18,11 @@ public class ServicioTerapeutaService {
 
     @Autowired
     private ServicioRepository servicioRepository;
+
+    @Transactional
+    public void eliminarPorIdTerapeuta(String idTerapeuta) {
+        servicioTerapeutaRepository.deleteByTerapeuta_IdTerapeuta(idTerapeuta);
+    }
 
     public void asociarServiciosATerapeuta(Terapeuta terapeuta, List<String> serviciosIds) {
         List<Servicio> servicios = servicioRepository.findAllById(serviciosIds);
