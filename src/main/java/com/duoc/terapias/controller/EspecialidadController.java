@@ -89,13 +89,13 @@ public class EspecialidadController {
         return "redirect:/especialidades";
     }
     
-    private String generarIdEspecialidad() {
+    public static String generarIdEspecialidad() {
         SimpleDateFormat sdf = new SimpleDateFormat("HHmmss");
         String fechaFormateada = sdf.format(new Date());
         return "ES" + fechaFormateada;
     }
     
-    private String generarIdServicio() {
+    public static String generarIdServicio() {
         SimpleDateFormat sdf = new SimpleDateFormat("HHmmss");
         String fechaFormateada = sdf.format(new Date());
         return "SE" + fechaFormateada;
