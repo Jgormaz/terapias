@@ -4,15 +4,17 @@ public class BloqueDTO {
     private String id;
     private Integer horaIni;
     private Integer horaFin;
+    private Integer precio;
     private boolean disponible;
     private boolean enElPasado;
 
     public BloqueDTO() {}
 
-    public BloqueDTO(String id, Integer horaIni, Integer horaFin, boolean disponible, boolean enElPasado) {
+    public BloqueDTO(String id, Integer horaIni, Integer horaFin, boolean disponible, boolean enElPasado, Integer precio) {
         this.id = id;
         this.horaIni = horaIni;
         this.horaFin = horaFin;
+        this.precio = precio;
         this.disponible = disponible;
         this.enElPasado = enElPasado;
     }
@@ -55,6 +57,20 @@ public class BloqueDTO {
 
     public void setEnElPasado(boolean enElPasado) {
         this.enElPasado = enElPasado;
+    }
+
+    /**
+     * @return the precio
+     */
+    public Integer getPrecio() {
+        return precio;
+    }
+
+    /**
+     * @param precio the precio to set
+     */
+    public void setPrecio(Integer precio) {
+        this.precio = precio;
     }
 }
 

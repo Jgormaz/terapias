@@ -23,6 +23,8 @@ public interface ServicioTerapeutaRepository extends JpaRepository<ServicioTerap
     List<Servicio> findServiciosByUserName(@Param("userName") String userName);
     
     void deleteByTerapeuta_IdTerapeuta(String idTerapeuta);
+    
+    void deleteByTerapeuta_IdTerapeutaAndServicio_IdServicio(String idTerapeuta, String idServicio);
 
 }
 
