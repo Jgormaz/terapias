@@ -1,5 +1,6 @@
 package com.duoc.terapias.service;
 
+import com.duoc.terapias.model.Atencion;
 import com.duoc.terapias.model.Servicio;
 import com.duoc.terapias.model.ServicioTerapeuta;
 import com.duoc.terapias.model.Terapeuta;
@@ -18,6 +19,12 @@ public class ServicioTerapeutaService {
 
     @Autowired
     private ServicioRepository servicioRepository;
+    
+    @Autowired
+    private CalendarioService calendarioService;
+    
+    @Autowired
+    private AtencionService atencionService;
 
     @Transactional
     public void eliminarPorIdTerapeuta(String idTerapeuta) {
@@ -32,6 +39,8 @@ public class ServicioTerapeutaService {
             servicioTerapeuta.setTerapeuta(terapeuta);
             servicioTerapeuta.setServicio(servicio);
             servicioTerapeutaRepository.save(servicioTerapeuta);
+            Atencion atencion = atencionService.crearAtencionPorDefecto(terapeuta, servicio);
+            calendarioService.crearCalendarioParaTerapeuta(terapeuta.getIdTerapeuta(), atencion);
         }
     }
     

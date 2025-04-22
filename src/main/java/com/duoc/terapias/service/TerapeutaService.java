@@ -11,12 +11,16 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 @Service
 public class TerapeutaService {
 
     private final TerapeutaRepository terapeutaRepository;
+    
+    @Autowired
+    private CalendarioService calendarioService;
 
     public TerapeutaService(TerapeutaRepository terapeutaRepository) {
         this.terapeutaRepository = terapeutaRepository;

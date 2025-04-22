@@ -17,6 +17,7 @@ public class Dia {
     private Date fecha;
     private Integer horaIni;
     private Integer horaFin;
+    @Column(name = "tamaño_bloque")
     private Integer tamanoBloque;
     private Integer descuentoEspecial;
 

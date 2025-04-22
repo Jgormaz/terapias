@@ -62,7 +62,11 @@
                         <td>
                             <ul class="mb-0">
                                 <li th:each="servicioTerapeuta : ${terapeuta.servicios}"
-                                    th:text="${servicioTerapeuta.servicio.nombre}">Nombre del Servicio</li>
+                                    th:if="${servicioTerapeuta.servicio != null}">
+                                    <span th:text="${servicioTerapeuta.servicio.nombre}"></span>
+                                    <a th:href="@{'/calendario/terapeutas/' + ${terapeuta.idTerapeuta} + '/servicios/' + ${servicioTerapeuta.servicio.idServicio}}"
+                                       class="btn btn-sm btn-primary ms-2">Agendar</a>
+                                </li>
                             </ul>
                         </td>
                     </tr>
