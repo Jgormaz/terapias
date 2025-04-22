@@ -40,7 +40,7 @@ public class ServicioTerapeutaService {
             servicioTerapeuta.setServicio(servicio);
             servicioTerapeutaRepository.save(servicioTerapeuta);
             Atencion atencion = atencionService.crearAtencionPorDefecto(terapeuta, servicio);
-            calendarioService.crearCalendarioParaTerapeuta(terapeuta.getIdTerapeuta(), atencion);
+            calendarioService.crearCalendarioParaTerapeuta(terapeuta, atencion);
         }
     }
     
@@ -48,5 +48,13 @@ public class ServicioTerapeutaService {
     public List<Servicio> findServiciosByUserName(String userName) {
         return servicioTerapeutaRepository.findServiciosByUserName(userName);
     }
+    
+    @Transactional
+    public void desasociarServiciosDeTerapeuta(String idTerapeuta, List<String> idsServicios) {
+        for (String idServicio : idsServicios) {
+            servicioTerapeutaRepository.deleteByTerapeuta_IdTerapeutaAndServicio_IdServicio(idTerapeuta, idServicio);
+        }
+    }
+
 }
 

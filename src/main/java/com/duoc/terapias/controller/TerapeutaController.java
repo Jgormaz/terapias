@@ -3,8 +3,7 @@ package com.duoc.terapias.controller;
 import com.duoc.terapias.model.Comuna;
 import com.duoc.terapias.model.Region;
 import com.duoc.terapias.model.Terapeuta;
-import com.duoc.terapias.model.Calendario;
-import com.duoc.terapias.model.Semana;
+import com.duoc.terapias.model.Servicio;
 import com.duoc.terapias.service.TerapeutaService;
 import com.duoc.terapias.service.ComunaService;
 import com.duoc.terapias.service.RegionService;
@@ -12,9 +11,10 @@ import com.duoc.terapias.service.ServicioService;
 import com.duoc.terapias.service.ServicioTerapeutaService;
 import com.duoc.terapias.service.CalendarioService;
 import java.security.Principal;
-import java.time.LocalDateTime;
-import java.util.Comparator;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/terapeuta")
@@ -65,19 +66,60 @@ public class TerapeutaController {
         return "lista-terapeutas";
     }
     
+    @PostMapping("/asociar-servicios")
+    public String actualizarServicios(@RequestParam(required = false) List<String> serviciosSeleccionados,
+                                      Principal principal,
+                                      RedirectAttributes redirectAttributes) {
+        String username = principal.getName();
+        Terapeuta terapeuta = terapeutaService.obtenerPorUsername(username);
+
+        // Si no seleccionó ninguno, lista vacía
+        if (serviciosSeleccionados == null) {
+            serviciosSeleccionados = new ArrayList<>();
+        }
+
+        // Servicios actualmente asociados
+        List<Servicio> serviciosActuales = servicioTerapeutaService.findServiciosByUserName(username);
+
+        // Obtener IDs de los actuales para comparar
+        Set<String> idsActuales = serviciosActuales.stream()
+                .map(Servicio::getIdServicio)
+                .collect(Collectors.toSet());
+
+        Set<String> idsSeleccionados = new HashSet<>(serviciosSeleccionados);
+
+        // Asociar nuevos
+        Set<String> nuevos = new HashSet<>(idsSeleccionados);
+        nuevos.removeAll(idsActuales);
+        if (!nuevos.isEmpty()) {
+            servicioTerapeutaService.asociarServiciosATerapeuta(terapeuta, new ArrayList<>(nuevos));
+        }
+
+        // Desasociar los que ya no están seleccionados
+        Set<String> eliminar = new HashSet<>(idsActuales);
+        eliminar.removeAll(idsSeleccionados);
+        if (!eliminar.isEmpty()) {
+            servicioTerapeutaService.desasociarServiciosDeTerapeuta(terapeuta.getIdTerapeuta(), new ArrayList<>(eliminar));
+        }
+
+        redirectAttributes.addFlashAttribute("success", "Servicios actualizados correctamente.");
+        return "redirect:/"; 
+    }
+    
     @GetMapping("/asociar-servicios")
     public String mostrarFormularioAsociacion(Model model, Principal principal) {
         String username = principal.getName();
         Terapeuta terapeuta = terapeutaService.obtenerPorUsername(username);
-        
+
         model.addAttribute("terapeuta", terapeuta);
         model.addAttribute("servicios", servicioService.obtenerTodosLosServicios());
-        model.addAttribute("serviciosAsociados",servicioTerapeutaService.findServiciosByUserName(username)); // Método que devuelve los servicios asociados al terapeuta
+        model.addAttribute("serviciosAsociados", servicioTerapeutaService.findServiciosByUserName(username));
 
-        return "asociar-servicios";  // Nombre de la vista HTML
+        return "asociar-servicios";
     }
 
-    @PostMapping("/asociar-servicios")
+
+  /*  @PostMapping("/asociar-servicios")
     public String asociarServicios(@RequestParam List<String> serviciosSeleccionados, Principal principal) {
         String username = principal.getName();
         Terapeuta terapeuta = terapeutaService.obtenerPorUsername(username);
@@ -85,7 +127,7 @@ public class TerapeutaController {
         servicioTerapeutaService.asociarServiciosATerapeuta(terapeuta, serviciosSeleccionados);
 
         return "redirect:/terapeuta/asociar-servicios?success";  // Redirige con un mensaje de éxito
-    }
+    }*/
 
     // Endpoint para listar terapeutas con sus servicios
     @RequestMapping("/")
