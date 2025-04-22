@@ -42,7 +42,7 @@ public class Reserva {
     private Integer abono;
     
     @Enumerated(EnumType.STRING)
-    @Column(name = "estado", nullable = false)
+    @Column(name = "estado_reserva", nullable = false)
     private EstadoReserva estado = EstadoReserva.AGENDADA; // Valor por defecto
 
     // Getters y Setters

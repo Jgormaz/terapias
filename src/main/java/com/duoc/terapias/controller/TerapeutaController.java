@@ -3,13 +3,19 @@ package com.duoc.terapias.controller;
 import com.duoc.terapias.model.Comuna;
 import com.duoc.terapias.model.Region;
 import com.duoc.terapias.model.Terapeuta;
+import com.duoc.terapias.model.Calendario;
+import com.duoc.terapias.model.Semana;
 import com.duoc.terapias.service.TerapeutaService;
 import com.duoc.terapias.service.ComunaService;
 import com.duoc.terapias.service.RegionService;
 import com.duoc.terapias.service.ServicioService;
 import com.duoc.terapias.service.ServicioTerapeutaService;
+import com.duoc.terapias.service.CalendarioService;
 import java.security.Principal;
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -35,12 +41,14 @@ public class TerapeutaController {
     @Autowired
     private RegionService regionService;
     
-    
     @Autowired
     private ServicioService servicioService;
 
     @Autowired
     private ServicioTerapeutaService servicioTerapeutaService;
+    
+    @Autowired
+    private CalendarioService calendarioService;
     
     @PostMapping("/actualizarEstado")
     @ResponseBody // ← AÑADE ESTO si estás usando AJAX y no quieres redirección
