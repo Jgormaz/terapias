@@ -53,6 +53,7 @@ public class CalendarioService {
     public CalendarioDTO obtenerCalendarioParaTerapeutaYServicio(Terapeuta terapeuta, Servicio servicio) {
         Optional<Atencion> atencionesOptional = atencionRepository.findByTerapeutaAndServicio(terapeuta, servicio);
         if (!atencionesOptional.isPresent()) {
+            System.out.println("no existe la atención");
             return null;
         }
 
@@ -60,6 +61,7 @@ public class CalendarioService {
 
         Optional<Calendario> calendarioOptional = calendarioRepository.findByTerapeutaAndAtencion(terapeuta, atencion);
         if (!calendarioOptional.isPresent()) {
+            System.out.println("no existe el calendario");
             return null;
         }
 
@@ -71,23 +73,27 @@ public class CalendarioService {
         calendarioDTO.setIdServicio(servicio.getIdServicio());
 
         List<Semana> semanas = semanaRepository.findByCalendario(calendario);
-        List<SemanaDTO> semanasDTO = new ArrayList<>();
+        semanas.sort((a, b) -> a.getFecha().compareTo(b.getFecha())); // ✅ ordenar semanas por fecha
 
+        List<SemanaDTO> semanasDTO = new ArrayList<>();
         int i = 1;
+
         for (Semana semana : semanas) {
             SemanaDTO semanaDTO = new SemanaDTO();
             semanaDTO.setNumeroSemana(i++);
 
             List<Dia> dias = diaRepository.findBySemana(semana);
-            List<DiaDTO> diasDTO = new ArrayList<>();
+            dias.sort((a, b) -> a.getFecha().compareTo(b.getFecha())); // ✅ ordenar días por fecha
 
+            List<DiaDTO> diasDTO = new ArrayList<>();
             for (Dia dia : dias) {
                 DiaDTO diaDTO = new DiaDTO();
                 diaDTO.setFecha(dia.getFecha());
 
                 List<Bloque> bloques = bloqueRepository.findByDia(dia);
-                List<BloqueDTO> bloquesDTO = new ArrayList<>();
+                bloques.sort((a, b) -> Integer.compare(a.getHoraIni(), b.getHoraIni())); // ✅ ordenar bloques por hora
 
+                List<BloqueDTO> bloquesDTO = new ArrayList<>();
                 for (Bloque bloque : bloques) {
                     BloqueDTO bloqueDTO = new BloqueDTO();
                     bloqueDTO.setId(bloque.getID_bloque());
@@ -107,28 +113,25 @@ public class CalendarioService {
         }
 
         calendarioDTO.setSemanas(semanasDTO);
+        System.out.println("calendarioDTO " + calendarioDTO);
         return calendarioDTO;
     }
-    
 
     public void crearCalendarioParaTerapeuta(Terapeuta terapeuta, Atencion atencion) {
-        //Terapeuta terapeuta = terapeutaRepository.findById(terapeutaId).orElseThrow();
-        String idAtencion =atencion.getID_atencion();
-        // Verificar si ya existe un calendario con ese ID
+        String idAtencion = atencion.getID_atencion();
         Optional<Calendario> existente = calendarioRepository.findById(idAtencion);
         if (existente.isPresent()) {
-            return;  // Retornar la atención existente sin crear una nueva
+            return;
         }
+
         Calendario calendario = new Calendario();
         calendario.setAtencion(atencion);
         calendario.setID_calendario(atencion.getID_atencion());
         calendario.setTerapeuta(terapeuta);
 
-        // Establecer fecha base como el lunes de la semana actual
         LocalDate primerLunes = LocalDate.now().with(DayOfWeek.MONDAY);
         Date fechaHoy = Date.from(primerLunes.atStartOfDay(ZoneId.systemDefault()).toInstant());
         calendario.setFechaIni(fechaHoy);
-
         calendario.setSemanasVisibles(4);
         calendario.setSemanaIni("");
         calendario.setSemanaFin("");
@@ -138,7 +141,7 @@ public class CalendarioService {
             LocalDate fechaSemana = primerLunes.plusWeeks(i);
             Semana semana = new Semana();
             semana.setFecha(Date.from(fechaSemana.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-            semana.setID_semana(fechaSemana.toString());
+            semana.setID_semana(UUID.randomUUID().toString().substring(0,10));
             semana.setCalendario(calendario);
             semanaRepository.save(semana);
 
@@ -149,13 +152,12 @@ public class CalendarioService {
                 Dia dia = new Dia();
                 dia.setSemana(semana);
                 dia.setFecha(fechaDia);
-                String fechaDiaStr = fechaDiaLD.toString();
-                dia.setID_dia(fechaDiaStr);
+                dia.setID_dia(UUID.randomUUID().toString().substring(0,20));
                 diaRepository.save(dia);
 
                 for (int k = 9; k < 17; k++) {
                     Bloque bloque = new Bloque();
-                    bloque.setID_bloque(fechaDiaStr + "_" + k);
+                    bloque.setID_bloque(UUID.randomUUID().toString().substring(0,30));
                     bloque.setDia(dia);
                     bloque.setHoraIni(k * 100);
                     bloque.setHoraFin((k + 1) * 100);

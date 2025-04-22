@@ -8,6 +8,10 @@ public class CalendarioDTO {
     private String idServicio;
     private List<SemanaDTO> semanas;
 
+    public String toString(){
+        return idTerapeuta + " " + idServicio + " " + semanas.size();
+    }
+    
     // Getters y Setters
     public String getId() {
         return id;

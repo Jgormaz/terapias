@@ -302,3 +302,8 @@ INSERT INTO ServicioTerapeuta (ID_servicio, ID_terapeuta) VALUES
 ('SER009', 'TER009'), -- Kinesiología
 ('SER010', 'TER010'), -- Crioterapia
 
+--Limpia calendarios
+delete from bloque;
+delete from dia;
+delete from semana;
+delete from calendario;
