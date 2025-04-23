@@ -62,9 +62,19 @@
           <td th:each="dia : ${semana.dias}">
             <!-- Mostrar el bloque cuya horaIni/100 coincide con la hora -->
             <div th:each="bloque : ${dia.bloques}"
-                 th:if="${(bloque.horaIni / 100) == hora}"
-                 th:classappend="${bloque.disponible} ? ' disponible' : ' no-disponible'"
-                 th:text="${bloque.precio}">
+                 th:if="${(bloque.horaIni / 100) == hora}">
+
+              <a th:if="${bloque.disponible}"
+                 th:href="@{'/reservas/nueva'(bloqueId=${bloque.id}, terapeutaId=${terapeuta.idTerapeuta}, servicioId=${servicio.idServicio})}"
+                 class="d-block disponible text-decoration-none text-dark py-2">
+                $<span th:text="${bloque.precio}"></span>
+              </a>
+
+              <div th:if="${!bloque.disponible}"
+                   class="no-disponible py-2">
+                $<span th:text="${bloque.precio}"></span>
+              </div>
+
             </div>
           </td>
         </tr>
