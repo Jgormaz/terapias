@@ -215,6 +215,8 @@ CREATE TABLE Bloque (
 
 INSERT INTO Admin (user_name, password) VALUES ('Admin', 'admin');
 
+INSERT INTO categoria values ('CAT0001','Nuevo')
+
 INSERT INTO Region (ID_region, nombre) VALUES
 ('REG001', 'Región Metropolitana'),
 ('REG002', 'Valparaíso'),

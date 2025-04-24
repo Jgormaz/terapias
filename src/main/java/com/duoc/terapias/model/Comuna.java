@@ -15,7 +15,7 @@ public class Comuna {
     private Region region;
     private String nombre;
 
-    @OneToMany(mappedBy = "comuna")
+   @OneToMany(mappedBy = "comuna")
     private List<Paciente> pacientes;
 
     @OneToMany(mappedBy = "comuna")

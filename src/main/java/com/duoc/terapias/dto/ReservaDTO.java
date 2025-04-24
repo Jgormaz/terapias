@@ -6,13 +6,10 @@ import java.time.LocalDateTime;
 
 public class ReservaDTO {
     
+    private PacienteDTO paciente;
     private String idReserva;
     private String nombreTerapeuta;
-    private String nombrePaciente;
-    private String apellidoPaciente;
-    private String telefonoPaciente;
-    private String direccionPaciente;
-    private String correoPaciente;
+    private String apellidoPaternoTerapeuta;
     private String nombreServicio;
     private String nombreEspecialidad;
     private String direccionAtencion;
@@ -27,6 +24,7 @@ public class ReservaDTO {
     private String idBloque;
     private String idTerapeuta;
     private String idServicio;
+    
 
     /**
      * @return the idReserva
@@ -54,34 +52,6 @@ public class ReservaDTO {
      */
     public void setNombreTerapeuta(String nombreTerapeuta) {
         this.nombreTerapeuta = nombreTerapeuta;
-    }
-
-    /**
-     * @return the nombrePaciente
-     */
-    public String getNombrePaciente() {
-        return nombrePaciente;
-    }
-
-    /**
-     * @param nombrePaciente the nombrePaciente to set
-     */
-    public void setNombrePaciente(String nombrePaciente) {
-        this.nombrePaciente = nombrePaciente;
-    }
-
-    /**
-     * @return the correoPaciente
-     */
-    public String getCorreoPaciente() {
-        return correoPaciente;
-    }
-
-    /**
-     * @param correoPaciente the correoPaciente to set
-     */
-    public void setCorreoPaciente(String correoPaciente) {
-        this.correoPaciente = correoPaciente;
     }
 
     /**
@@ -284,45 +254,32 @@ public class ReservaDTO {
     }
 
     /**
-     * @return the apellidoPaciente
+     * @return the paciente
      */
-    public String getApellidoPaciente() {
-        return apellidoPaciente;
+    public PacienteDTO getPaciente() {
+        return paciente;
     }
 
     /**
-     * @param apellidoPaciente the apellidoPaciente to set
+     * @param paciente the paciente to set
      */
-    public void setApellidoPaciente(String apellidoPaciente) {
-        this.apellidoPaciente = apellidoPaciente;
+    public void setPaciente(PacienteDTO paciente) {
+        this.paciente = paciente;
     }
 
     /**
-     * @return the telefonoPaciente
+     * @return the apellidoPaternoTerapeuta
      */
-    public String getTelefonoPaciente() {
-        return telefonoPaciente;
+    public String getApellidoPaternoTerapeuta() {
+        return apellidoPaternoTerapeuta;
     }
 
     /**
-     * @param telefonoPaciente the telefonoPaciente to set
+     * @param apellidoPaternoTerapeuta the apellidoPaternoTerapeuta to set
      */
-    public void setTelefonoPaciente(String telefonoPaciente) {
-        this.telefonoPaciente = telefonoPaciente;
+    public void setApellidoPaternoTerapeuta(String apellidoPaternoTerapeuta) {
+        this.apellidoPaternoTerapeuta = apellidoPaternoTerapeuta;
     }
 
-    /**
-     * @return the direccionPaciente
-     */
-    public String getDireccionPaciente() {
-        return direccionPaciente;
-    }
-
-    /**
-     * @param direccionPaciente the direccionPaciente to set
-     */
-    public void setDireccionPaciente(String direccionPaciente) {
-        this.direccionPaciente = direccionPaciente;
-    }
 }
 
