@@ -25,7 +25,10 @@ public class Paciente {
     private String correo;
     private int atenciones;
     private int evaluacion;
-    private String ID_categoria;
+    
+    @ManyToOne
+    @JoinColumn(name = "ID_categoria", nullable = false)
+    private Categoria categoria;
 
     public Paciente() {}
 
@@ -77,9 +80,6 @@ public class Paciente {
     public int getEvaluacion() { return evaluacion; }
     public void setEvaluacion(int evaluacion) { this.evaluacion = evaluacion; }
 
-    public String getID_categoria() { return ID_categoria; }
-    public void setID_categoria(String ID_categoria) { this.ID_categoria = ID_categoria; }
-
     @Override
     public String toString() {
         return "Paciente{" +
@@ -96,6 +96,20 @@ public class Paciente {
                 ", evaluacion=" + evaluacion +
                 ", ID_categoria='" + ID_categoria + '\'' +
                 '}';
+    }
+
+    /**
+     * @return the categoria
+     */
+    public Categoria getCategoria() {
+        return categoria;
+    }
+
+    /**
+     * @param categoria the categoria to set
+     */
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
     }
 }
 
