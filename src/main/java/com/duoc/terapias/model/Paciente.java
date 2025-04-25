@@ -44,7 +44,7 @@ public class Paciente {
         this.correo = correo;
         this.atenciones = atenciones;
         this.evaluacion = evaluacion;
-        this.ID_categoria = ID_categoria;
+        this.categoria = categoria;
     }
 
     public String getID_paciente() { return ID_paciente; }
@@ -94,7 +94,7 @@ public class Paciente {
                 ", correo='" + correo + '\'' +
                 ", atenciones=" + atenciones +
                 ", evaluacion=" + evaluacion +
-                ", ID_categoria='" + ID_categoria + '\'' +
+                ", categoria='" + categoria + '\'' +
                 '}';
     }
 

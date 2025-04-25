@@ -149,8 +149,7 @@ CREATE TABLE Atencion (
 CREATE TABLE Reserva (
     ID_reserva VARCHAR(50) PRIMARY KEY,
     ID_paciente VARCHAR(50) NOT NULL,
-    ID_terapeuta VARCHAR(50) NOT NULL, -- Nueva clave foránea
-    ID_especialidad VARCHAR(50) NOT NULL,  -- Nueva columna para la especialidad
+    ID_atencion VARCHAR(50) NOT NULL, 
     nombre VARCHAR(50) NOT NULL,
     direccion_atencion VARCHAR(50) NOT NULL,
     ID_comuna VARCHAR(50) NOT NULL,
@@ -163,9 +162,9 @@ CREATE TABLE Reserva (
     FOREIGN KEY (ID_paciente) REFERENCES Paciente(ID_paciente),
     FOREIGN KEY (ID_comuna) REFERENCES Comuna(ID_comuna),
     FOREIGN KEY (ID_region) REFERENCES Region(ID_region),
-    FOREIGN KEY (ID_terapeuta) REFERENCES Terapeuta(ID_terapeuta),
-    FOREIGN KEY (ID_especialidad) REFERENCES Especialidad(ID_especialidad) -- Relación con Especialidad
+    FOREIGN KEY (ID_atencion) REFERENCES Atencion(ID_atencion)
 );
+
 
 -- Tabla Calendario
 CREATE TABLE Calendario (
