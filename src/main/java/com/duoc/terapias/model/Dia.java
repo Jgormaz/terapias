@@ -38,7 +38,7 @@ public class Dia {
     
     @Override
     public String toString() {
-        return "Dia{" + "ID_dia=" + ID_dia + ", semana=" + semana + "}";
+        return "Dia{" + "ID_dia=" + ID_dia + ", fecha=" + fecha + "}";
     }
 }
 
