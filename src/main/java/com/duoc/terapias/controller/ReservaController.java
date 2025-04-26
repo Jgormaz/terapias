@@ -277,7 +277,8 @@ public class ReservaController {
             reserva.setPrecio(dto.getPrecio());
             reserva.setAbono(0);
             reserva.setEstado(EstadoReserva.AGENDADA); // Enum de estado
-            bloque.setDisponible(false);
+            //bloque.setDisponible(false);
+            calendarioService.marcarBloquesOcupados(bloque, dto.getIdTerapeuta());
             reservaRepository.save(reserva);
 
             model.addAttribute("mensaje", "Reserva realizada con éxito.");

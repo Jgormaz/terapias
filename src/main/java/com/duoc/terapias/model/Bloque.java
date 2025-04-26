@@ -43,7 +43,7 @@ public class Bloque {
     
     @Override
     public String toString() {
-        return "Bloque{" + "ID_bloque=" + ID_bloque + ", dia=" + dia + "}";
+        return "Bloque{" + "ID_bloque=" + ID_bloque + ", dia=" + dia + ", horaIni=" + horaIni + ", horaFin=" + horaFin + "}";
     }
     
     @Transient

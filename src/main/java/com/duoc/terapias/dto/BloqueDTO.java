@@ -1,5 +1,7 @@
 package com.duoc.terapias.dto;
 
+import java.util.Date;
+
 public class BloqueDTO {
     private String id;
     private Integer horaIni;
@@ -7,16 +9,18 @@ public class BloqueDTO {
     private Integer precio;
     private boolean disponible;
     private boolean enElPasado;
+    private Date fecha;
 
     public BloqueDTO() {}
 
-    public BloqueDTO(String id, Integer horaIni, Integer horaFin, boolean disponible, boolean enElPasado, Integer precio) {
+    public BloqueDTO(String id, Integer horaIni, Integer horaFin, boolean disponible, boolean enElPasado, Integer precio, Date fecha) {
         this.id = id;
         this.horaIni = horaIni;
         this.horaFin = horaFin;
         this.precio = precio;
         this.disponible = disponible;
         this.enElPasado = enElPasado;
+        this.fecha = fecha;
     }
 
     public String getId() {
@@ -71,6 +75,24 @@ public class BloqueDTO {
      */
     public void setPrecio(Integer precio) {
         this.precio = precio;
+    }
+
+    /**
+     * @return the fecha
+     */
+    public Date getFecha() {
+        return fecha;
+    }
+
+    /**
+     * @param fecha the fecha to set
+     */
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
+    }
+    
+    public String toString(){
+        return   "horaIni:" + horaIni + " horaFin:" + horaFin + " fecha:" + fecha;
     }
 }
 
