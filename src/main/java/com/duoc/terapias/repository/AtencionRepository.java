@@ -10,5 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AtencionRepository extends JpaRepository<Atencion, String> {
     Optional<Atencion> findByTerapeutaAndServicio(Terapeuta terapeuta, Servicio servicio);
+    Optional<Atencion> findByTerapeuta_IdTerapeutaAndServicio_IdServicio(String idTerapeuta, String idServicio);
+
 }
 

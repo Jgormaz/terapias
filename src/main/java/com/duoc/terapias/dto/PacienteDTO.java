@@ -107,5 +107,9 @@ public class PacienteDTO {
     public void setPacienteExistente(boolean pacienteExistente) {
         this.pacienteExistente = pacienteExistente;
     }
+    
+    public String toString(){
+        return this.nombre + " " + this.pacienteExistente;
+    }
 
 }

@@ -4,6 +4,7 @@ package com.duoc.terapias.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,6 +26,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers(HttpMethod.POST, "/reservas/enviar-codigo").permitAll()
                 .requestMatchers("/","/calendario/**","/reservas/**","/terapeuta/especialidad/**","/css/**", "/debug", "/js/**").permitAll()  // Solo permite página de inicio y estáticos
                 .requestMatchers("/especialidades").authenticated() // Requiere login
                 .requestMatchers("/especialidades/**").hasRole("ADMIN") // Solo Admin puede modificar
