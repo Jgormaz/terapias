@@ -99,7 +99,7 @@ public class CalendarioService {
                     bloqueDTO.setId(bloque.getID_bloque());
                     bloqueDTO.setHoraIni(bloque.getHoraIni());
                     bloqueDTO.setHoraFin(bloque.getHoraFin());
-                    bloqueDTO.setDisponible(!bloque.isEnElPasado());
+                    bloqueDTO.setDisponible(!bloque.isEnElPasado() && bloque.getDisponible());
                     bloqueDTO.setPrecio(bloque.getPrecio());
                     bloquesDTO.add(bloqueDTO);
                 }
