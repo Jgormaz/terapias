@@ -2,7 +2,9 @@
 package com.duoc.terapias.controller;
 
 import com.duoc.terapias.model.Especialidad;
+import com.duoc.terapias.model.Terapeuta;
 import com.duoc.terapias.service.EspecialidadService;
+import com.duoc.terapias.service.TerapeutaService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -18,6 +20,9 @@ public class HomeController {
     
     @Autowired
     private EspecialidadService especialidadService;
+    
+    @Autowired
+    private TerapeutaService terapeutaService;
 
     @GetMapping("/")
     public String home(Model model, Authentication authentication) {
@@ -30,6 +35,8 @@ public class HomeController {
         }
         List<Especialidad> especialidades = especialidadService.obtenerTodas();
         model.addAttribute("especialidades", especialidades);
+        List<Terapeuta> terapeutas = terapeutaService.obtenerTodos();
+        model.addAttribute("terapeutas", terapeutas);
     return "home";
 }
     

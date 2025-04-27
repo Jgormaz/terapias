@@ -138,7 +138,19 @@
             <a th:href="@{'/login-role'}">Login</a>
         </li>
 
-
+        <li sec:authorize="hasAnyAuthority('ROLE_ADMIN')">
+            <form method="get" th:action="@{/reservas/verporterapeuta}">
+                <label for="idTerapeuta">Selecciona un Terapeuta:</label>
+                <select name="idTerapeuta" id="idTerapeuta" required>
+                    <option value="" disabled selected>Seleccione un terapeuta</option>
+                    <option th:each="t : ${terapeutas}" 
+                            th:value="${t.idTerapeuta}" 
+                            th:text="${t.nombre + ' ' + t.ape_paterno}">
+                    </option>
+                </select>
+                <button type="submit" class="btn">Ver Reservas</button>
+            </form>
+        </li>
         <li sec:authorize="hasAnyAuthority('ROLE_TERAPEUTA')">
             <a th:href="@{/terapeuta/asociar-servicios}">Servicios</a>
         </li>

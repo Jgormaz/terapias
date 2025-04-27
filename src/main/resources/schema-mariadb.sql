@@ -158,7 +158,7 @@ CREATE TABLE Reserva (
     hora_fin TIME NOT NULL,
     precio INT NOT NULL,
     abono INT DEFAULT 0,
-    estado_reserva ENUM('agendada', 'cancelada', 'noshow', 'completada', 'reagendada') NOT NULL DEFAULT 'agendada',
+    estado_reserva ENUM('AGENDADA', 'CANCELADA', 'NOSHOW', 'COMPLETADA', 'REAGENDADA') NOT NULL DEFAULT 'AGENDADA',
     FOREIGN KEY (ID_paciente) REFERENCES Paciente(ID_paciente),
     FOREIGN KEY (ID_comuna) REFERENCES Comuna(ID_comuna),
     FOREIGN KEY (ID_region) REFERENCES Region(ID_region),
@@ -250,6 +250,7 @@ INSERT INTO Comuna (ID_comuna, ID_region, nombre) VALUES
 
 
 --Limpia calendarios
+delete from reserva;
 delete from bloque;
 delete from dia;
 delete from semana;

@@ -8,7 +8,8 @@ import java.util.Date;
 @Table(name = "reserva")
 public class Reserva {
     @Id
-    private String ID_reserva;
+    @Column(name = "ID_reserva")
+    private String idReserva;
 
     @ManyToOne
     @JoinColumn(name = "ID_paciente", nullable = false)
@@ -51,8 +52,6 @@ public class Reserva {
         this.estado = estado;
     }
 
-    public String getID_reserva() { return ID_reserva; }
-    public void setID_reserva(String ID_reserva) { this.ID_reserva = ID_reserva; }
     public Paciente getPaciente() { return paciente; }
     public void setPaciente(Paciente paciente) { this.paciente = paciente; }
     public String getNombre() { return nombre; }
@@ -74,7 +73,7 @@ public class Reserva {
     
     @Override
     public String toString() {
-        return "Reserva{" + "ID_reserva=" + ID_reserva + ", paciente=" + paciente + "}";
+        return "Reserva{" + "ID_reserva=" + idReserva + ", paciente=" + paciente + "}";
     }
 
     /**
@@ -89,6 +88,20 @@ public class Reserva {
      */
     public void setAtencion(Atencion atencion) {
         this.atencion = atencion;
+    }
+
+    /**
+     * @return the idReserva
+     */
+    public String getIdReserva() {
+        return idReserva;
+    }
+
+    /**
+     * @param idReserva the idReserva to set
+     */
+    public void setIdReserva(String idReserva) {
+        this.idReserva = idReserva;
     }
 
 
