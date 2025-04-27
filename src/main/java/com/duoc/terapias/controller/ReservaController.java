@@ -21,6 +21,9 @@ import com.duoc.terapias.repository.PacienteRepository;
 import com.duoc.terapias.repository.RegionRepository;
 import com.duoc.terapias.repository.ReservaRepository;
 import com.duoc.terapias.service.CalendarioService;
+import com.duoc.terapias.service.ReservaService;
+import com.duoc.terapias.service.TerapeutaService;
+import com.duoc.terapias.service.UserService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -40,6 +43,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.duoc.terapias.util.PasswordGenerator;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Controller
 @RequestMapping("/reservas")
@@ -47,6 +53,9 @@ public class ReservaController {
 
     @Autowired
     private CalendarioService calendarioService;
+    
+    @Autowired
+    private TerapeutaService terapeutaService;
 
     @Autowired
     private BloqueRepository bloqueRepository;
@@ -71,6 +80,12 @@ public class ReservaController {
     
     @Autowired
     private JavaMailSender mailSender;
+    
+    @Autowired
+    private UserService userService;
+    
+    @Autowired
+    private ReservaService reservaService;
 
     @GetMapping("/nueva")
     public String mostrarFormularioReserva(
@@ -261,7 +276,7 @@ public class ReservaController {
             Reserva reserva = new Reserva();
             String idReserva = "RE" + LocalTime.now().format(DateTimeFormatter.ofPattern("HHmmss"));
 
-            reserva.setID_reserva(idReserva);
+            reserva.setIdReserva(idReserva);
             reserva.setPaciente(paciente);
             reserva.setAtencion(atencion);
             reserva.setNombre(paciente.getNombre() + " " + paciente.getApe_paterno());
@@ -278,8 +293,11 @@ public class ReservaController {
             reserva.setAbono(0);
             reserva.setEstado(EstadoReserva.AGENDADA); // Enum de estado
             //bloque.setDisponible(false);
+            
             calendarioService.marcarBloquesOcupados(bloque, dto.getIdTerapeuta());
             reservaRepository.save(reserva);
+            bloque.setReserva(reserva);
+            bloqueRepository.save(bloque);
 
             model.addAttribute("mensaje", "Reserva realizada con éxito.");
             System.out.println("Reserva realizada con éxito.");
@@ -309,6 +327,83 @@ public class ReservaController {
             System.out.println("Error al enviar correo: " + e.getMessage());
         }
     }
+    
+    @GetMapping("/verporterapeuta")
+   public String verReservasTerapeuta(Model model,
+                                      @RequestParam(value = "idTerapeuta", required = false) String idTerapeuta,
+                                      @RequestParam(value = "filtroPaciente", required = false) String filtroPaciente,
+                                      @RequestParam(value = "filtroFecha", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate filtroFecha,
+                                      @RequestParam(value = "filtroServicio", required = false) String filtroServicio,
+                                      @RequestParam(value = "filtroEstado", required = false) String filtroEstado) {
+
+       String rol = userService.getRolUsuarioActual();
+       System.out.println("RESERVAS rol " + rol);
+       List<ReservaDTO> reservas = List.of();
+       String nombreCompletoTerapeuta = "";
+       System.out.println("RESERVAS idTerapeuta " + idTerapeuta);
+
+       // Buscar reservas según el rol
+       if ("ROLE_ADMIN".equals(rol) && idTerapeuta != null && !idTerapeuta.isEmpty()) {
+           reservas = reservaService.listarReservasPorTerapeuta(idTerapeuta);
+
+           Terapeuta terapeutaSeleccionado = terapeutaService.obtenerPorId(idTerapeuta);
+           if (terapeutaSeleccionado != null) {
+               nombreCompletoTerapeuta = terapeutaSeleccionado.getNombre() + " " + terapeutaSeleccionado.getApe_paterno();
+           }
+       } else if ("ROLE_TERAPEUTA".equals(rol)) {
+           String userName = userService.getUsernameUsuarioActual();
+           Terapeuta terapeutaActual = terapeutaService.obtenerPorUsername(userName);
+           System.out.println("RESERVAS userName " + userName);
+           System.out.println("RESERVAS terapeutaActual " + terapeutaActual);
+           if (terapeutaActual != null) {
+               String idTerapeutaActual = terapeutaActual.getIdTerapeuta();
+               reservas = reservaService.listarReservasPorTerapeuta(idTerapeuta);
+               System.out.println("RESERVAS " + reservas);
+               nombreCompletoTerapeuta = terapeutaActual.getNombre() + " " + terapeutaActual.getApe_paterno();
+           }
+       }
+
+       // 🔵 Aplicar filtros sobre la lista de reservas si corresponde
+       if (filtroPaciente != null && !filtroPaciente.isEmpty()) {
+           reservas = reservas.stream()
+                   .filter(r -> (r.getPaciente().getNombre() + " " + r.getPaciente().getApellidoPaterno())
+                           .toLowerCase()
+                           .contains(filtroPaciente.toLowerCase()))
+                   .collect(Collectors.toList());
+       }
+
+        if (filtroFecha != null) {
+            reservas = reservas.stream()
+                    .filter(r -> {
+                        if (r.getFecha() == null) return false;
+                        LocalDate fechaReserva = r.getFecha();
+                        return fechaReserva.equals(filtroFecha);
+                    })
+                    .collect(Collectors.toList());
+        }
+
+
+       if (filtroServicio != null && !filtroServicio.isEmpty()) {
+           reservas = reservas.stream()
+                   .filter(r -> r.getNombreServicio()
+                           .toLowerCase()
+                           .contains(filtroServicio.toLowerCase()))
+                   .collect(Collectors.toList());
+       }
+
+        if (filtroEstado != null && !filtroEstado.isEmpty()) {
+            reservas = reservas.stream()
+                    .filter(r -> r.getEstado() != null && r.getEstado().equalsIgnoreCase(filtroEstado))
+                    .collect(Collectors.toList());
+        }
+
+       model.addAttribute("reservas", reservas);
+       model.addAttribute("terapeutaNombreCompleto", nombreCompletoTerapeuta);
+       model.addAttribute("rol", rol);
+       model.addAttribute("idTerapeuta", idTerapeuta); // 🔵 Para que no pierdas el id en los filtros
+
+       return "reservas-terapeuta";  // Página que muestra las reservas
+   }
 
 
 }

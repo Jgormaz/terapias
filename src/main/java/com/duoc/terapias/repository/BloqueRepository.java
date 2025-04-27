@@ -5,6 +5,7 @@ import com.duoc.terapias.model.Bloque;
 import com.duoc.terapias.model.Dia;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -37,6 +38,8 @@ public interface BloqueRepository extends JpaRepository<Bloque, String> {
         @Param("horaIni") Integer horaIni,
         @Param("horaFin") Integer horaFin
     );
+    
+     Optional<Bloque> findByReserva_IdReserva(String idReserva);
 
 }
 

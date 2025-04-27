@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Reservas del Terapeuta</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" th:href="@{https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css}">
+</head>
+<body>
+<div class="container my-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">Reservas</h1>
+        <a th:href="@{/dashboard}" class="btn btn-outline-secondary">Volver</a> <!-- Botón Volver -->
+    </div>
+
+    <!-- Formulario para seleccionar terapeuta (solo admin) -->
+    <div th:if="${rol == 'ADMIN'}" class="mb-4">
+        <form method="get" th:action="@{/reservas/verporterapeuta}" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label for="idTerapeuta" class="form-label">Selecciona un terapeuta:</label>
+                <select id="idTerapeuta" name="idTerapeuta" class="form-select">
+                    <option th:each="t : ${terapeutas}" 
+                            th:value="${t.idTerapeuta}" 
+                            th:text="${t.nombre + ' ' + t.ape_paterno}">
+                    </option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Ver Reservas</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Mostrar nombre del terapeuta consultado -->
+    <div th:if="${terapeutaNombreCompleto != null}" class="mb-4">
+        <h3>Reservas de: <span th:text="${terapeutaNombreCompleto}"></span></h3>
+    </div>
+
+    <!-- Filtros de búsqueda -->
+    <div th:if="${reservas.size() > 0}" class="mb-4">
+        <form method="get" th:action="@{/reservas/verporterapeuta}" class="row g-3">
+            <input type="hidden" name="idTerapeuta" th:value="${idTerapeuta}" />
+
+            <div class="col-md-3">
+                <input type="text" class="form-control" name="filtroPaciente" placeholder="Filtrar por paciente">
+            </div>
+
+            <div class="col-md-2">
+                <input type="date" class="form-control" name="filtroFecha">
+            </div>
+
+            <div class="col-md-3">
+                <input type="text" class="form-control" name="filtroServicio" placeholder="Filtrar por servicio">
+            </div>
+
+            <div class="col-md-2">
+                <select name="filtroEstado" class="form-select">
+                    <option value="">Todos los estados</option>
+                    <option value="COMPLETADA">COMPLETADA</option>
+                    <option value="CANCELADA">CANCELADA</option>
+                    <option value="AGENDADA">AGENDADA</option>
+                </select>
+            </div>
+
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-secondary w-100">Aplicar Filtros</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Tabla de reservas -->
+    <div th:if="${reservas.size() > 0}">
+        <div class="table-responsive rounded shadow-sm">
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Paciente</th>
+                        <th>Servicio</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Precio</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="reserva : ${reservas}">
+                        <td th:text="${reserva.paciente.nombre} + ' ' + ${reserva.paciente.apellidoPaterno}"></td>
+                        <td th:text="${reserva.nombreServicio}"></td>
+                        <td th:text="${reserva.fecha}"></td>                      
+                        <td th:text="${reserva.horaIni}"></td>
+                        <td th:text="${reserva.precio}"></td>
+                        <td>
+                            <span th:classappend="${
+                                    reserva.estado == 'COMPLETADA' ? 'badge bg-success' :
+                                    (reserva.estado == 'CANCELADA' ? 'badge bg-danger' :
+                                    (reserva.estado == 'AGENDADA' ? 'badge bg-warning text-dark' : 'badge bg-secondary'))
+                                }"
+                                th:text="${reserva.estado}">
+                            </span>
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Mensaje si no hay reservas -->
+    <div th:if="${reservas.size() == 0}">
+        <p class="text-muted text-center">No hay reservas para mostrar.</p>
+    </div>
+
+</div>
+
+<script th:src="@{https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
+
+
+
