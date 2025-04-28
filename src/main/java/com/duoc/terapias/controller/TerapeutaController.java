@@ -119,15 +119,7 @@ public class TerapeutaController {
     }
 
 
-  /*  @PostMapping("/asociar-servicios")
-    public String asociarServicios(@RequestParam List<String> serviciosSeleccionados, Principal principal) {
-        String username = principal.getName();
-        Terapeuta terapeuta = terapeutaService.obtenerPorUsername(username);
-        
-        servicioTerapeutaService.asociarServiciosATerapeuta(terapeuta, serviciosSeleccionados);
 
-        return "redirect:/terapeuta/asociar-servicios?success";  // Redirige con un mensaje de éxito
-    }*/
 
     // Endpoint para listar terapeutas con sus servicios
     @RequestMapping("/")

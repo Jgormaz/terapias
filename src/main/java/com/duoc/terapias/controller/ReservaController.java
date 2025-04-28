@@ -386,6 +386,23 @@ public class ReservaController {
         }
     }
     
+    private void enviarCorreoEvaluación(String correo, String idReserva) {
+        String codigo = PasswordGenerator.generarCodigo(idReserva);
+        String asunto = "Evalúe a su terapeuta";
+        String mensaje = "Ingrese a nuestro sitio y denos su feedback en la opción 'Evaluar' \n";
+        mensaje += "Su código para evaluar es: " + codigo + "\n";
+
+        try {
+            SimpleMailMessage mail = new SimpleMailMessage();
+            mail.setTo(correo);
+            mail.setSubject(asunto);
+            mail.setText(mensaje);
+            mailSender.send(mail);
+        } catch (Exception e) {
+            System.out.println("Error al enviar correo: " + e.getMessage());
+        }
+    }
+    
    @GetMapping("/verporterapeuta")
    public String verReservasTerapeuta(Model model,
                                       @RequestParam(value = "idTerapeuta", required = false) String idTerapeuta,
@@ -566,6 +583,9 @@ public class ReservaController {
         if (reserva != null) {
             reserva.setEstado(EstadoReserva.valueOf(nuevoEstado));
             reservaRepository.save(reserva);
+            if (reserva.getEstado().name().equals("COMPLETADA")){
+                this.enviarCorreoEvaluación(reserva.getPaciente().getCorreo(), idReserva);
+            }
         }
         return "redirect:/reservas/verporterapeuta?idTerapeuta=" + reserva.getAtencion().getTerapeuta().getIdTerapeuta();
     }
