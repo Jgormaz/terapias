@@ -551,6 +551,25 @@ public class ReservaController {
     }
     
 
+    
+    @GetMapping("/cambiar-estado/{idReserva}/{nuevoEstado}")
+    public String cambiarEstadoReserva(@PathVariable String idReserva, 
+                                       @PathVariable String nuevoEstado) {
+        Optional<Reserva> reservaOpt = reservaRepository.findById(idReserva);
+
+        if(!reservaOpt.isPresent()){
+            return "/";
+        }
+
+        Reserva reserva = reservaOpt.get();
+
+        if (reserva != null) {
+            reserva.setEstado(EstadoReserva.valueOf(nuevoEstado));
+            reservaRepository.save(reserva);
+        }
+        return "redirect:/reservas/verporterapeuta?idTerapeuta=" + reserva.getAtencion().getTerapeuta().getIdTerapeuta();
+    }
+
 
 }
 

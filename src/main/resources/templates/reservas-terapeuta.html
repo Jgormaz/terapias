@@ -111,6 +111,34 @@
                                 onclick="confirmarCancelacion(this)">
                                 <i class="bi bi-trash"></i>
                             </button>
+                            
+                                <!-- Botón Cambiar Estado -->
+                            <div class="btn-group" th:if="${reserva.estado != 'CANCELADA' and reserva.estado != 'COMPLETADA'}">
+                                <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Estado
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" 
+                                           th:href="@{/reservas/cambiar-estado/{idReserva}/{nuevoEstado}(idReserva=${reserva.idReserva}, nuevoEstado='COMPLETADA')}">
+                                           Marcar como Completada
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" 
+                                           th:href="@{/reservas/cambiar-estado/{idReserva}/{nuevoEstado}(idReserva=${reserva.idReserva}, nuevoEstado='NOSHOW')}">
+                                           Marcar como No Show
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" 
+                                           th:href="@{/reservas/cambiar-estado/{idReserva}/{nuevoEstado}(idReserva=${reserva.idReserva}, nuevoEstado='REAGENDADA')}">
+                                           Marcar como Reagendada
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            
                         </td>
                     </tr>
                 </tbody>

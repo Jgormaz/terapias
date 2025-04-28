@@ -3,6 +3,7 @@ package com.duoc.terapias.service;
 
 import com.duoc.terapias.dto.PacienteDTO;
 import com.duoc.terapias.dto.ReservaDTO;
+import com.duoc.terapias.model.EstadoReserva;
 import com.duoc.terapias.model.Reserva;
 import com.duoc.terapias.repository.BloqueRepository;
 import com.duoc.terapias.repository.ReservaRepository;
@@ -85,4 +86,12 @@ public class ReservaService {
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
     }
+    
+    public void cambiarEstado(String idReserva, EstadoReserva nuevoEstado) {
+    Reserva reserva = reservaRepository.findById(idReserva)
+                        .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
+    reserva.setEstado(nuevoEstado);
+    reservaRepository.save(reserva);
+}
+
 }
