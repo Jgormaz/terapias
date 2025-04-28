@@ -8,7 +8,7 @@ public class TerapeutaInfoDTO {
     private String nombre;
     private String apePaterno;
     private String apeMaterno;
-    private Integer evaluacion;
+    private Double evaluacion;
     private List<String> servicios;  // Lista de pares nombre_especialidad:nombre_servicio
     private boolean enabled;
     // Getters y Setters
@@ -31,8 +31,8 @@ public class TerapeutaInfoDTO {
     public String getApeMaterno() { return apeMaterno; }
     public void setApeMaterno(String apeMaterno) { this.apeMaterno = apeMaterno; }
 
-    public Integer getEvaluacion() { return evaluacion; }
-    public void setEvaluacion(Integer evaluacion) { this.evaluacion = evaluacion; }
+    public Double getEvaluacion() { return evaluacion; }
+    public void setEvaluacion(Double evaluacion) { this.evaluacion = evaluacion; }
 
     public List<String> getServicios() { return servicios; }
     public void setServicios(List<String> servicios) { this.servicios = servicios; }
