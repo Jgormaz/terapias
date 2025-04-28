@@ -102,6 +102,10 @@
         <li class="nav-item" sec:authorize="hasAnyAuthority('ROLE_TERAPEUTA')">
             <a class="nav-link" th:href="@{/terapeuta/asociar-servicios}">Servicios</a>
         </li>
+        <li class="nav-item" sec:authorize="hasAnyAuthority('ROLE_TERAPEUTA')">
+            <a class="nav-link" th:href="@{/pacientes/por-terapeuta}">Pacientes</a>
+        </li>        
+        
         <li class="nav-item">
             <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#cancelarReservaModal">Cancelar Reserva</a>
         </li>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Pacientes del Terapeuta</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" th:href="@{https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css}">
+</head>
+<body>
+
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">Pacientes del Terapeuta</h1>
+        <a th:href="@{/}" class="btn btn-outline-secondary">Volver</a>
+    </div>
+
+    <!-- Filtros -->
+    <div class="row mb-4 g-3">
+        <div class="col-md-4">
+            <input id="filtroNombre" type="text" class="form-control" placeholder="Filtrar por nombre">
+        </div>
+        <div class="col-md-4">
+            <input id="filtroApellido" type="text" class="form-control" placeholder="Filtrar por apellido">
+        </div>
+        <div class="col-md-4">
+            <input id="filtroCorreo" type="text" class="form-control" placeholder="Filtrar por correo">
+        </div>
+    </div>
+
+    <!-- Tabla de pacientes -->
+    <div class="table-responsive shadow-sm rounded">
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Correo</th>
+                </tr>
+            </thead>
+            <tbody id="tablaPacientes">
+                <tr th:each="paciente : ${pacientes}">
+                    <td th:text="${paciente.nombre}"></td>
+                    <td th:text="${paciente.ape_paterno + ' ' + paciente.ape_materno}"></td>
+                    <td th:text="${paciente.correo}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:if="${#lists.isEmpty(pacientes)}" class="text-muted text-center mt-4">
+        No se encontraron pacientes.
+    </div>
+</div>
+
+<script th:src="@{https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js}"></script>
+
+<!-- Filtro en tiempo real -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const nombreInput = document.getElementById("filtroNombre");
+        const apellidoInput = document.getElementById("filtroApellido");
+        const correoInput = document.getElementById("filtroCorreo");
+        const filas = document.querySelectorAll("#tablaPacientes tr");
+
+        function filtrarTabla() {
+            const nombre = nombreInput.value.toLowerCase();
+            const apellido = apellidoInput.value.toLowerCase();
+            const correo = correoInput.value.toLowerCase();
+
+            filas.forEach(fila => {
+                const celdas = fila.querySelectorAll("td");
+                const matchNombre = celdas[0].textContent.toLowerCase().includes(nombre);
+                const matchApellido = celdas[1].textContent.toLowerCase().includes(apellido);
+                const matchCorreo = celdas[2].textContent.toLowerCase().includes(correo);
+
+                fila.style.display = (matchNombre && matchApellido && matchCorreo) ? "" : "none";
+            });
+        }
+
+        nombreInput.addEventListener("input", filtrarTabla);
+        apellidoInput.addEventListener("input", filtrarTabla);
+        correoInput.addEventListener("input", filtrarTabla);
+    });
+</script>
+
+</body>
+</html>
+
