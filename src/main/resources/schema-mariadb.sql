@@ -250,8 +250,8 @@ INSERT INTO Comuna (ID_comuna, ID_region, nombre) VALUES
 
 
 --Limpia calendarios
-delete from reserva;
 delete from bloque;
+delete from reserva;
 delete from dia;
 delete from semana;
 delete from calendario;

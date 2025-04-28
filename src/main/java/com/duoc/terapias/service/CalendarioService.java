@@ -198,36 +198,58 @@ public class CalendarioService {
             return;
         }
 
-        for (Calendario calendario : calendarios) {
-            // Buscar todas las semanas de ese calendario
-            List<Semana> semanas = semanaRepository.findByCalendario(calendario);
-            
-            bloqueReservado.setDisponible(false);
-            bloqueRepository.save(bloqueReservado);
+        bloqueReservado.setDisponible(false);
+        bloqueRepository.save(bloqueReservado);
 
-           /* for (Semana semana : semanas) {
-                // Buscar todos los días de esa semana
-                List<Dia> dias = diaRepository.findBySemana(semana);
+        Date fechaTruncada = truncateToDate(bloqueReservado.getDia().getFecha());
 
-                for (Dia dia : dias) {
-                    // Buscar todos los bloques de ese día que coincidan en horaIni y horaFin
-                    
-                    if(dia.getFecha().equals(bloqueReservado.getDia().getFecha())){*/
-                        Date fechaTruncada = truncateToDate(bloqueReservado.getDia().getFecha());
-
-                        System.out.println("idTerapeuta:" + idTerapeuta + " fecha:" + fechaTruncada + " horaIni:" + bloqueReservado.getHoraIni() + " horaFin:" + bloqueReservado.getHoraFin());
-                        List<Bloque> bloques = bloqueRepository.findByTerapeutaAndFechaAndHoraIniAndHoraFin(idTerapeuta, fechaTruncada, bloqueReservado.getHoraIni(), bloqueReservado.getHoraFin());
-                        System.out.println(bloques);
-                        for (Bloque bloque : bloques) {
-                            if (bloque.getDisponible()) {
-                                bloque.setDisponible(false);
-                                bloqueRepository.save(bloque);
-                            }
-                        }
-                    //}
-                //}
-            //}
+        System.out.println("idTerapeuta:" + idTerapeuta + " fecha:" + fechaTruncada + " horaIni:" + bloqueReservado.getHoraIni() + " horaFin:" + bloqueReservado.getHoraFin());
+        List<Bloque> bloques = bloqueRepository.findByTerapeutaAndFechaAndHoraIniAndHoraFin(idTerapeuta, fechaTruncada, bloqueReservado.getHoraIni(), bloqueReservado.getHoraFin());
+        System.out.println(bloques);
+        for (Bloque bloque : bloques) {
+            if (bloque.getDisponible()) {
+                bloque.setDisponible(false);
+                bloqueRepository.save(bloque);
+            }
         }
+
+
+    }
+    
+    @Transactional
+    public void marcarBloquesDesocupados(Bloque bloqueLiberado, String idTerapeuta) {
+        
+        Optional<Terapeuta> terapeutaOpc = terapeutaRepository.findById(idTerapeuta);
+        
+        if(!terapeutaOpc.isPresent()){
+            System.out.println("No se encontró el terapeuta con ID: " + idTerapeuta);
+            return;
+        }
+        
+        Terapeuta terapeuta = terapeutaOpc.get();
+        
+        // Buscar todos los calendarios del terapeuta
+        List<Calendario> calendarios = calendarioRepository.findAllByTerapeuta(terapeuta);
+
+        if (calendarios.isEmpty()) {
+            return;
+        }
+
+        bloqueLiberado.setDisponible(true);
+        bloqueRepository.save(bloqueLiberado);
+
+        Date fechaTruncada = truncateToDate(bloqueLiberado.getDia().getFecha());
+
+        System.out.println("idTerapeuta:" + idTerapeuta + " fecha:" + fechaTruncada + " horaIni:" + bloqueLiberado.getHoraIni() + " horaFin:" + bloqueLiberado.getHoraFin());
+        List<Bloque> bloques = bloqueRepository.findByTerapeutaAndFechaAndHoraIniAndHoraFin(idTerapeuta, fechaTruncada, bloqueLiberado.getHoraIni(), bloqueLiberado.getHoraFin());
+        System.out.println(bloques);
+        for (Bloque bloque : bloques) {
+            if (!bloque.getDisponible()) {
+                bloque.setDisponible(true);
+                bloqueRepository.save(bloque);
+            }
+        }
+  
     }
     
     @Transactional(readOnly = true)

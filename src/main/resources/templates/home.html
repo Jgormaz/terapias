@@ -3,203 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <title>Especialidades y Terapias</title>
-    <link rel="stylesheet" href="/css/styles.css">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Estilos Personalizados -->
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
             background-color: #f4f6f8;
         }
 
-        nav {
+        .navbar-custom {
             background-color: #2c3e50;
+        }
+
+        .navbar-custom .nav-link, 
+        .navbar-custom .navbar-brand, 
+        .navbar-custom .user-info {
             color: white;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
-        nav ul {
-            list-style: none;
-            display: flex;
-            gap: 15px;
-            padding: 0;
-            margin: 0;
-        }
-
-        nav ul li a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            padding: 8px 12px;
-            border-radius: 4px;
-        }
-
-        nav ul li a:hover {
+        .navbar-custom .nav-link:hover {
             background-color: #34495e;
+            border-radius: 5px;
         }
 
-        .user-info {
-            font-size: 0.9em;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 30px auto;
-            padding: 20px;
-            background: white;
+        .card {
+            margin-bottom: 20px;
             border-radius: 10px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
-        h2 {
-            text-align: center;
-            color: #2c3e50;
-        }
-
-        .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 6px;
+        .btn-custom {
             background-color: #3498db;
             color: white;
-            font-weight: bold;
-            cursor: pointer;
-            margin-bottom: 10px;
         }
 
-        .btn:hover {
+        .btn-custom:hover {
             background-color: #2980b9;
-        }
-
-        .acordeon-item {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            background-color: #fdfdfd;
         }
 
         .acordeon-header {
             background: #ecf0f1;
-            padding: 12px;
             cursor: pointer;
             font-weight: bold;
-            border-radius: 8px 8px 0 0;
-        }
-
-        .acordeon-body {
-            display: none;
-            padding: 15px;
-            transition: max-height 0.3s ease-out;
-            max-height: 0;
-            overflow: hidden;
-        }
-
-        .acordeon-body.show {
-            display: block;
-            max-height: 800px;
-        }
-
-        ul {
-            padding-left: 20px;
-        }
-
-        @media screen and (max-width: 768px) {
-            nav {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            nav ul {
-                flex-direction: column;
-                gap: 8px;
-                margin-top: 10px;
-            }
-
-            .container {
-                margin: 15px;
-            }
+            padding: 10px;
+            border-radius: 10px 10px 0 0;
         }
     </style>
 </head>
 <body>
 
 <!-- Navegación -->
-<nav>
-    <div class="user-info">
-        <div sec:authorize="isAuthenticated()">
-            Usuario: <span sec:authentication="name"></span> |
-            <a th:href="@{/logout}" style="color: #f39c12;">Cerrar sesión</a>
-        </div>
-    </div>
-    <ul>
-        <li sec:authorize="!isAuthenticated()">
-            <a th:href="@{'/login-role'}">Login</a>
-        </li>
+<nav class="navbar navbar-expand-lg navbar-custom">
+  <div class="container-fluid">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-        <li sec:authorize="hasAnyAuthority('ROLE_ADMIN')">
-            <form method="get" th:action="@{/reservas/verporterapeuta}">
-                <label for="idTerapeuta">Selecciona un Terapeuta:</label>
-                <select name="idTerapeuta" id="idTerapeuta" required>
-                    <option value="" disabled selected>Seleccione un terapeuta</option>
-                    <option th:each="t : ${terapeutas}" 
-                            th:value="${t.idTerapeuta}" 
-                            th:text="${t.nombre + ' ' + t.ape_paterno}">
-                    </option>
-                </select>
-                <button type="submit" class="btn">Ver Reservas</button>
-            </form>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item" sec:authorize="!isAuthenticated()">
+            <a class="nav-link" th:href="@{'/login-role'}">Login</a>
         </li>
-        <li sec:authorize="hasAnyAuthority('ROLE_TERAPEUTA')">
-            <a th:href="@{/terapeuta/asociar-servicios}">Servicios</a>
+        <li class="nav-item" sec:authorize="hasAnyAuthority('ROLE_ADMIN')">
+            <a class="nav-link" th:href="@{/especialidades}">Editar Especialidades</a>
         </li>
-        <li sec:authorize="hasAnyAuthority('ROLE_ADMIN')">
-            <a th:href="@{/especialidades}">Editar especialidades</a>
+        <li class="nav-item" sec:authorize="hasAnyAuthority('ROLE_ADMIN')">
+            <a class="nav-link" th:href="@{/terapeuta/lista-terapeutas}">Ver Terapeutas</a>
         </li>
-        <li sec:authorize="hasAuthority('ROLE_ADMIN')">
-            <a th:href="@{/terapeuta/lista-terapeutas}">Ver terapeutas</a>
+        <li class="nav-item" sec:authorize="hasAuthority('ROLE_ADMIN')">
+            <a class="nav-link" th:href="@{/terapeuta/terapeutas/nuevo}">Agregar Terapeuta</a>
         </li>
-        <li sec:authorize="hasAuthority('ROLE_ADMIN')">
-            <a th:href="@{/terapeuta/terapeutas/nuevo}">Agregar terapeuta</a>
+        <li class="nav-item dropdown" sec:authorize="hasAuthority('ROLE_ADMIN')">
+            <a class="nav-link dropdown-toggle" href="#" id="reservasDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Ver Reservas
+            </a>
+            <div class="dropdown-menu p-3" aria-labelledby="reservasDropdown" style="min-width: 250px;">
+                <form method="get" th:action="@{/reservas/verporterapeuta}">
+                    <div class="mb-2">
+                        <label for="idTerapeuta" class="form-label">Terapeuta:</label>
+                        <select class="form-select" name="idTerapeuta" id="idTerapeuta" required>
+                            <option value="" disabled selected>Seleccione un terapeuta</option>
+                            <option th:each="t : ${terapeutas}" 
+                                    th:value="${t.idTerapeuta}" 
+                                    th:text="${t.nombre + ' ' + t.ape_paterno}">
+                            </option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Buscar</button>
+                </form>
+            </div>
         </li>
-    </ul>
+        <li class="nav-item" sec:authorize="hasAnyAuthority('ROLE_TERAPEUTA')">
+            <a class="nav-link" th:href="@{/reservas/verporterapeuta}">Ver Reservas</a>
+        </li>
+        <li class="nav-item" sec:authorize="hasAnyAuthority('ROLE_TERAPEUTA')">
+            <a class="nav-link" th:href="@{/terapeuta/asociar-servicios}">Servicios</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#cancelarReservaModal">Cancelar Reserva</a>
+        </li>
+      </ul>
+
+      <div class="user-info" sec:authorize="isAuthenticated()">
+          Usuario: <span sec:authentication="name"></span> |
+          <a class="nav-link d-inline" th:href="@{/logout}" style="color: #f39c12;">Cerrar sesión</a>
+      </div>
+    </div>
+  </div>
 </nav>
 
 <!-- Contenido -->
-<div class="container">
-    <h2>Especialidades y sus Terapias</h2>
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Especialidades y sus Terapias</h2>
 
-    <div th:each="especialidad : ${especialidades}" class="acordeon-item">
-        <a th:href="@{/terapeuta/especialidad/{id}/terapeutas(id=${especialidad.idEspecialidad})}">
-            <button class="btn">Agendar</button>
-        </a>   
+    <div th:each="especialidad : ${especialidades}" class="card">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="card-title" th:text="${especialidad.nombre}"></h5>
+                <a th:href="@{/terapeuta/especialidad/{id}/terapeutas(id=${especialidad.idEspecialidad})}">
+                    <button class="btn btn-custom">Agendar</button>
+                </a>
+            </div>
 
-        <div class="acordeon-header" th:onclick="|toggleAcordeon('body-__${especialidad.idEspecialidad}__')|">
-            <span th:text="${especialidad.nombre}"></span>
-        </div>
+            <div class="acordeon-header" th:onclick="|toggleAcordeon('body-__${especialidad.idEspecialidad}__')|">
+                Ver más detalles
+            </div>
 
-        <div th:id="|body-${especialidad.idEspecialidad}|" class="acordeon-body">
-            <p><strong>Descripción:</strong> <span th:text="${especialidad.descripcion}"></span></p>
-            <h4>Terapias:</h4>
-            <ul>
-                <li th:each="terapia : ${especialidad.servicios}" th:text="${terapia.nombre}"></li>
-            </ul>
+            <div th:id="|body-${especialidad.idEspecialidad}|" class="acordeon-body" style="display:none;">
+                <p><strong>Descripción:</strong> <span th:text="${especialidad.descripcion}"></span></p>
+                <h6>Terapias:</h6>
+                <ul>
+                    <li th:each="terapia : ${especialidad.servicios}" th:text="${terapia.nombre}"></li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
 
+<!-- Modal para cancelar reserva -->
+<div class="modal fade" id="cancelarReservaModal" tabindex="-1" aria-labelledby="cancelarReservaModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="/reservas/cancelarPorCliente/" method="get" id="formCancelarReserva">
+        <div class="modal-header">
+          <h5 class="modal-title" id="cancelarReservaModalLabel">Cancelar Reserva</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="idReservaInput" class="form-label">Código de Reserva</label>
+            <input type="text" class="form-control" id="idReservaInput" name="idReserva" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button type="submit" class="btn btn-danger">Cancelar Reserva</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
 <script>
+document.getElementById('formCancelarReserva').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    var idReserva = document.getElementById('idReservaInput').value.trim();
+    if(idReserva) {
+        fetch('/reservas/cancelarPorCliente/' + idReserva, {
+            method: 'GET'
+        })
+        .then(response => response.text())
+        .then(message => {
+            alert(message); // <-- Mostrar el mensaje
+            var modal = bootstrap.Modal.getInstance(document.getElementById('cancelarReservaModal'));
+            modal.hide(); // Cerrar el modal
+            document.getElementById('formCancelarReserva').reset(); // Limpiar el formulario
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Hubo un error al intentar cancelar la reserva.');
+        });
+    }
+});
+</script>
+
+<script>
+
+
+    // Acordeón mostrar/ocultar
     function toggleAcordeon(id) {
         document.querySelectorAll('.acordeon-body').forEach(body => {
             if (body.id !== id) {
-                body.classList.remove('show');
+                body.style.display = 'none';
             }
         });
         const body = document.getElementById(id);
-        body.classList.toggle('show');
+        body.style.display = (body.style.display === 'block') ? 'none' : 'block';
     }
 </script>
 
+<!-- Bootstrap Bundle JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
+

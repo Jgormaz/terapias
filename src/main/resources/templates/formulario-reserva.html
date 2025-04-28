@@ -145,11 +145,16 @@
         <input type="hidden" th:field="*{paciente.correo}" />
         <input type="hidden" th:field="*{idTerapeuta}" />
         <input type="hidden" th:field="*{idServicio}" />
+        <input type="hidden" th:field="*{idReserva}" />
         <input type="hidden" th:field="*{horaIni}" />
         <input type="hidden" th:field="*{horaFin}" />
         <input type="hidden" th:field="*{precio}" />
         <input type="hidden" th:field="*{fecha}" />
         <input type="hidden" th:field="*{idBloque}" />
+        <input type="hidden" th:field="*{nombreTerapeuta}" />
+        <input type="hidden" th:field="*{apellidoPaternoTerapeuta}" />
+        <input type="hidden" th:field="*{nombreServicio}" />
+        <input type="hidden" th:field="*{correoTerapeuta}" />
 
         <h2 th:if="${reservaDTO.paciente.pacienteExistente}">Datos del Paciente</h2>
         <h2 th:if="${!reservaDTO.paciente.pacienteExistente}">Registrar Nuevo Paciente</h2>
