@@ -4,6 +4,7 @@ package com.duoc.terapias.service;
 import com.duoc.terapias.dto.PacienteDTO;
 import com.duoc.terapias.dto.ReservaDTO;
 import com.duoc.terapias.model.EstadoReserva;
+import com.duoc.terapias.model.Paciente;
 import com.duoc.terapias.model.Reserva;
 import com.duoc.terapias.model.Terapeuta;
 import com.duoc.terapias.repository.BloqueRepository;
@@ -104,7 +105,7 @@ public class ReservaService {
         Reserva reserva = reservaRepository.findById(idReserva)
             .orElseThrow(() -> new IllegalStateException("Reserva no encontrada"));
 
-        if (reserva.getEstado() != EstadoReserva.EVALUADA) {
+        if (reserva.getEstado() == EstadoReserva.EVALUADA) {
             throw new IllegalStateException("Esta reserva ya fue evaluada, no se puede volver a evaluar");
         }
         else if (reserva.getEstado() != EstadoReserva.COMPLETADA) {
@@ -138,6 +139,10 @@ public class ReservaService {
         // Cambiar estado de la reserva
         reserva.setEstado(EstadoReserva.EVALUADA);
         reservaRepository.save(reserva);
+    }
+    
+    public List<Paciente> obtenerPacientesPorTerapeuta(String idTerapeuta) {
+        return reservaRepository.findPacientesByTerapeutaId(idTerapeuta);
     }
 
 }

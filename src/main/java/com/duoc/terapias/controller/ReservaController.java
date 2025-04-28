@@ -417,10 +417,10 @@ public class ReservaController {
                                       @RequestParam(value = "filtroEstado", required = false) String filtroEstado) {
 
        String rol = userService.getRolUsuarioActual();
-       System.out.println("RESERVAS rol " + rol);
+
        List<ReservaDTO> reservas = List.of();
        String nombreCompletoTerapeuta = "";
-       System.out.println("RESERVAS idTerapeuta " + idTerapeuta);
+
 
        // Buscar reservas según el rol
        if ("ROLE_ADMIN".equals(rol) && idTerapeuta != null && !idTerapeuta.isEmpty()) {
@@ -433,12 +433,9 @@ public class ReservaController {
        } else if ("ROLE_TERAPEUTA".equals(rol)) {
            String userName = userService.getUsernameUsuarioActual();
            Terapeuta terapeutaActual = terapeutaService.obtenerPorUsername(userName);
-           System.out.println("RESERVAS userName " + userName);
-           System.out.println("RESERVAS terapeutaActual " + terapeutaActual);
            if (terapeutaActual != null) {
                String idTerapeutaActual = terapeutaActual.getIdTerapeuta();
                reservas = reservaService.listarReservasPorTerapeuta(idTerapeutaActual);
-               System.out.println("RESERVAS " + reservas);
                nombreCompletoTerapeuta = terapeutaActual.getNombre() + " " + terapeutaActual.getApe_paterno();
            }
        }
