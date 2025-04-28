@@ -40,7 +40,8 @@ public class Terapeuta {
 
     private String correo;
 
-    private Integer evaluacion;
+    @Column(precision = 3, scale = 2)
+    private Double evaluacion;
 
     private String url_foto;  // Campo para la URL de la foto del terapeuta
 
@@ -65,8 +66,8 @@ public class Terapeuta {
     public void setTelefono(String telefono) { this.telefono = telefono; }
     public String getCorreo() { return correo; }
     public void setCorreo(String correo) { this.correo = correo; }
-    public Integer getEvaluacion() { return evaluacion; }
-    public void setEvaluacion(Integer evaluacion) { this.evaluacion = evaluacion; }
+    public Double getEvaluacion() { return evaluacion; }
+    public void setEvaluacion(Double evaluacion) { this.evaluacion = evaluacion; }
     public String getUrl_foto() { return url_foto; }
     public void setUrl_foto(String url_foto) { this.url_foto = url_foto; }
     public List<ServicioTerapeuta> getServicios() { return servicios; }
