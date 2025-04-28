@@ -20,6 +20,7 @@ import com.duoc.terapias.repository.ComunaRepository;
 import com.duoc.terapias.repository.PacienteRepository;
 import com.duoc.terapias.repository.RegionRepository;
 import com.duoc.terapias.repository.ReservaRepository;
+import com.duoc.terapias.repository.TerapeutaRepository;
 import com.duoc.terapias.service.CalendarioService;
 import com.duoc.terapias.service.ReservaService;
 import com.duoc.terapias.service.TerapeutaService;
@@ -46,6 +47,7 @@ import com.duoc.terapias.util.PasswordGenerator;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -58,6 +60,9 @@ public class ReservaController {
     
     @Autowired
     private TerapeutaService terapeutaService;
+    
+    @Autowired
+    private TerapeutaRepository terapeutaRepository;
 
     @Autowired
     private BloqueRepository bloqueRepository;
@@ -387,10 +392,10 @@ public class ReservaController {
     }
     
     private void enviarCorreoEvaluación(String correo, String idReserva) {
-        String codigo = PasswordGenerator.generarCodigo(idReserva);
+        
         String asunto = "Evalúe a su terapeuta";
         String mensaje = "Ingrese a nuestro sitio y denos su feedback en la opción 'Evaluar' \n";
-        mensaje += "Su código para evaluar es: " + codigo + "\n";
+        mensaje += "Su ID de Reserva es: " + idReserva + "\n";
 
         try {
             SimpleMailMessage mail = new SimpleMailMessage();
@@ -589,8 +594,8 @@ public class ReservaController {
         }
         return "redirect:/reservas/verporterapeuta?idTerapeuta=" + reserva.getAtencion().getTerapeuta().getIdTerapeuta();
     }
-
-
+    
+    
 }
 
 
