@@ -40,7 +40,6 @@ public class Terapeuta {
 
     private String correo;
 
-    @Column(precision = 3, scale = 2)
     private Double evaluacion;
 
     private String url_foto;  // Campo para la URL de la foto del terapeuta
