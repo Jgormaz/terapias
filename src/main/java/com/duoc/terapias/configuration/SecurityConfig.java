@@ -27,7 +27,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.POST, "/reservas/enviar-codigo").permitAll()
-                .requestMatchers("/","/calendario/**","/reservas/**","/terapeuta/especialidad/**","/css/**", "/debug", "/js/**").permitAll()  // Solo permite página de inicio y estáticos
+                .requestMatchers("/","/evaluaciones/**","/calendario/**","/reservas/**","/terapeuta/especialidad/**","/css/**", "/debug", "/js/**").permitAll()  // Solo permite página de inicio y estáticos
                 .requestMatchers("/especialidades").authenticated() // Requiere login
                 .requestMatchers("/especialidades/**").hasRole("ADMIN") // Solo Admin puede modificar
                 .requestMatchers("/terapeuta/terapeutas/nuevo", "/terapeuta/terapeutas/save").hasRole("ADMIN") // Solo Admin puede modificar

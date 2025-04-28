@@ -2,7 +2,9 @@
 package com.duoc.terapias.repository;
 
 
+import com.duoc.terapias.model.EstadoReserva;
 import com.duoc.terapias.model.Reserva;
+import com.duoc.terapias.model.Terapeuta;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
@@ -29,4 +31,7 @@ public interface ReservaRepository extends JpaRepository<Reserva, String> {
     
     @Query("SELECT r FROM Reserva r WHERE r.atencion.terapeuta.idTerapeuta = :idTerapeuta")
     List<Reserva> findReservasByTerapeuta(String idTerapeuta);
+    
+    int countByAtencion_TerapeutaAndEstado(Terapeuta terapeuta, EstadoReserva estado);
+
 }

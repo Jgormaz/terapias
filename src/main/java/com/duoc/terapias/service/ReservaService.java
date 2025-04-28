@@ -5,8 +5,10 @@ import com.duoc.terapias.dto.PacienteDTO;
 import com.duoc.terapias.dto.ReservaDTO;
 import com.duoc.terapias.model.EstadoReserva;
 import com.duoc.terapias.model.Reserva;
+import com.duoc.terapias.model.Terapeuta;
 import com.duoc.terapias.repository.BloqueRepository;
 import com.duoc.terapias.repository.ReservaRepository;
+import com.duoc.terapias.repository.TerapeutaRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -29,6 +31,9 @@ public class ReservaService {
  
     @Autowired
     private BloqueRepository bloqueRepository;
+    
+    @Autowired
+    private TerapeutaRepository terapeutaRepository;
 
    /* @Transactional(readOnly = true)
     public List<Reserva> listarReservasPorTerapeuta(String idTerapeuta) {
@@ -88,10 +93,51 @@ public class ReservaService {
     }
     
     public void cambiarEstado(String idReserva, EstadoReserva nuevoEstado) {
-    Reserva reserva = reservaRepository.findById(idReserva)
-                        .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
-    reserva.setEstado(nuevoEstado);
-    reservaRepository.save(reserva);
-}
+        Reserva reserva = reservaRepository.findById(idReserva)
+                            .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
+        reserva.setEstado(nuevoEstado);
+        reservaRepository.save(reserva);
+    }
+    
+    @Transactional
+    public void evaluarReserva(String idReserva, int nuevaNota) {
+        Reserva reserva = reservaRepository.findById(idReserva)
+            .orElseThrow(() -> new IllegalStateException("Reserva no encontrada"));
+
+        if (reserva.getEstado() != EstadoReserva.EVALUADA) {
+            throw new IllegalStateException("Esta reserva ya fue evaluada, no se puede volver a evaluar");
+        }
+        else if (reserva.getEstado() != EstadoReserva.COMPLETADA) {
+            throw new IllegalStateException("Solo puedes evaluar reservas completadas");
+        }
+
+        Terapeuta terapeuta = reserva.getAtencion().getTerapeuta();
+        if (terapeuta == null) {
+            throw new IllegalStateException("La reserva no tiene terapeuta asociado");
+        }
+
+        // Obtener cuántas reservas COMPLETADAS tiene el terapeuta (antes de esta evaluación)
+        long cantidadCompletadas = reservaRepository.countByAtencion_TerapeutaAndEstado(terapeuta, EstadoReserva.COMPLETADA);
+
+        if (cantidadCompletadas <= 0) {
+            throw new IllegalStateException("Error en la cantidad de reservas completadas");
+        }
+
+        // Calcular nueva evaluación
+        Double evaluacionActual = terapeuta.getEvaluacion();
+        if (evaluacionActual == null) {
+            evaluacionActual = 0.0;
+        }
+
+        double nuevaEvaluacion = ((evaluacionActual * (cantidadCompletadas - 1)) + nuevaNota) / cantidadCompletadas;
+        terapeuta.setEvaluacion(nuevaEvaluacion);
+
+        // Actualizar terapeuta
+        terapeutaRepository.save(terapeuta);
+
+        // Cambiar estado de la reserva
+        reserva.setEstado(EstadoReserva.EVALUADA);
+        reservaRepository.save(reserva);
+    }
 
 }

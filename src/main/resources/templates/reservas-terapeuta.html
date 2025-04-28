@@ -60,6 +60,9 @@
                     <option value="COMPLETADA">COMPLETADA</option>
                     <option value="CANCELADA">CANCELADA</option>
                     <option value="AGENDADA">AGENDADA</option>
+                    <option value="EVALUADA">EVALUADA</option>
+                    <option value="NOSHOW">NOSHOW</option>
+                    <option value="REAGENDADA">REAGENDADA</option>
                 </select>
             </div>
 
@@ -95,7 +98,8 @@
                             <span th:classappend="${
                                     reserva.estado == 'COMPLETADA' ? 'badge bg-success' :
                                     (reserva.estado == 'CANCELADA' ? 'badge bg-danger' :
-                                    (reserva.estado == 'AGENDADA' ? 'badge bg-warning text-dark' : 'badge bg-secondary'))
+                                    (reserva.estado == 'EVALUADA' ? 'badge bg-primary' :
+                                    (reserva.estado == 'AGENDADA' ? 'badge bg-warning text-dark' : 'badge bg-secondary')))
                                 }"
                                 th:text="${reserva.estado}">
                             </span>
@@ -113,7 +117,7 @@
                             </button>
                             
                                 <!-- Botón Cambiar Estado -->
-                            <div class="btn-group" th:if="${reserva.estado != 'CANCELADA' and reserva.estado != 'COMPLETADA'}">
+                            <div class="btn-group" th:if="${reserva.estado != 'CANCELADA' and reserva.estado != 'COMPLETADA' and reserva.estado != 'EVALUADA'}">
                                 <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                     Estado
                                 </button>
