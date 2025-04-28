@@ -24,6 +24,7 @@ public class ReservaDTO {
     private String idBloque;
     private String idTerapeuta;
     private String idServicio;
+    private String correoTerapeuta;
     
 
     /**
@@ -279,6 +280,20 @@ public class ReservaDTO {
      */
     public void setApellidoPaternoTerapeuta(String apellidoPaternoTerapeuta) {
         this.apellidoPaternoTerapeuta = apellidoPaternoTerapeuta;
+    }
+
+    /**
+     * @return the correoTerapeuta
+     */
+    public String getCorreoTerapeuta() {
+        return correoTerapeuta;
+    }
+
+    /**
+     * @param correoTerapeuta the correoTerapeuta to set
+     */
+    public void setCorreoTerapeuta(String correoTerapeuta) {
+        this.correoTerapeuta = correoTerapeuta;
     }
 
 }

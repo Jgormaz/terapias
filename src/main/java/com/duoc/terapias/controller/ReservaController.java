@@ -46,6 +46,8 @@ import com.duoc.terapias.util.PasswordGenerator;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/reservas")
@@ -175,7 +177,8 @@ public class ReservaController {
                     .getCalendario().getTerapeuta().getApe_paterno());
             dto.setNombreServicio(bloque.getDia().getSemana()
                     .getCalendario().getAtencion().getServicio().getNombre());
-           
+            dto.setCorreoTerapeuta(bloque.getDia().getSemana()
+                    .getCalendario().getTerapeuta().getCorreo());
 
             LocalDate fecha = bloque.getDia().getFecha().toInstant()
                 .atZone(ZoneId.systemDefault())
@@ -186,6 +189,7 @@ public class ReservaController {
             dto.setPrecio(bloque.getPrecio());
             dto.setIdTerapeuta(bloque.getDia().getSemana().getCalendario().getTerapeuta().getIdTerapeuta());
             dto.setIdServicio(bloque.getDia().getSemana().getCalendario().getAtencion().getServicio().getIdServicio());
+            
         }
 
         model.addAttribute("reservaDTO", dto);
@@ -298,7 +302,9 @@ public class ReservaController {
             reservaRepository.save(reserva);
             bloque.setReserva(reserva);
             bloqueRepository.save(bloque);
-
+            dto.setIdReserva(reserva.getIdReserva());
+            this.enviarCofirmacionReserva(dto);
+            
             model.addAttribute("mensaje", "Reserva realizada con éxito.");
             System.out.println("Reserva realizada con éxito.");
             return "reserva-exitosa"; 
@@ -309,6 +315,58 @@ public class ReservaController {
             model.addAttribute("mensaje", "Error al crear la reserva.");
             model.addAttribute("reservaDTO", dto);
             return "formulario-reserva";
+        }
+    }
+    
+    private void enviarCancelacionReserva(Reserva reserva, Bloque bloque) {
+
+        String asunto = "Reserva cancelada";
+        String mensaje = "Su reserva ha sido cancelada!\n";
+        mensaje += "Terapeuta: " + reserva.getAtencion().getTerapeuta().getNombre() + " " + reserva.getAtencion().getTerapeuta().getApe_paterno() + "\n";
+        mensaje += "Servicio: " + reserva.getAtencion().getServicio().getNombre() + "\n";
+        mensaje += "Paciente: " + reserva.getPaciente().getNombre() + " " + reserva.getPaciente().getApe_materno() + "\n";
+        mensaje += "Fecha: " + bloque.getDia().getFecha() + "\n";
+        mensaje += "Hora: " + reserva.getHoraIni() + "\n";
+        mensaje += "Precio: " + reserva.getPrecio() + "\n";
+        mensaje += "ID Reserva: " + reserva.getIdReserva() + "\n";
+        
+        try {
+            SimpleMailMessage mail = new SimpleMailMessage();
+            mail.setSubject(asunto);
+            mail.setText(mensaje);
+            mail.setTo(reserva.getPaciente().getCorreo());
+            mailSender.send(mail);
+            mail.setTo(reserva.getAtencion().getTerapeuta().getCorreo());
+            mailSender.send(mail);
+        } catch (Exception e) {
+            System.out.println("Error al enviar correo: " + e.getMessage());
+        }
+    }
+    
+    private void enviarCofirmacionReserva(ReservaDTO reserva) {
+
+        String asunto = "Reserva confirmada";
+        String mensaje = "Su reserva ha sido confirmada!\n";
+        mensaje += "Terapeuta: " + reserva.getNombreTerapeuta() + " " + reserva.getApellidoPaternoTerapeuta() + "\n";
+        mensaje += "Servicio: " + reserva.getNombreServicio() + "\n";
+        mensaje += "Paciente: " + reserva.getPaciente().getNombre() + " " + reserva.getPaciente().getApellidoPaterno() + "\n";
+        DateTimeFormatter fechaFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter horaFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        mensaje += "Fecha: " + reserva.getFecha().format(fechaFormatter) + "\n";
+        mensaje += "Hora: " + reserva.getHoraIni().format(horaFormatter) + "\n";
+        mensaje += "Precio: " + reserva.getPrecio() + "\n";
+        mensaje += "ID Reserva: " + reserva.getIdReserva() + "\n";
+        
+        try {
+            SimpleMailMessage mail = new SimpleMailMessage();
+            mail.setSubject(asunto);
+            mail.setText(mensaje);
+            mail.setTo(reserva.getPaciente().getCorreo());
+            mailSender.send(mail);
+            mail.setTo(reserva.getCorreoTerapeuta());
+            mailSender.send(mail);
+        } catch (Exception e) {
+            System.out.println("Error al enviar correo: " + e.getMessage());
         }
     }
     
@@ -328,7 +386,7 @@ public class ReservaController {
         }
     }
     
-    @GetMapping("/verporterapeuta")
+   @GetMapping("/verporterapeuta")
    public String verReservasTerapeuta(Model model,
                                       @RequestParam(value = "idTerapeuta", required = false) String idTerapeuta,
                                       @RequestParam(value = "filtroPaciente", required = false) String filtroPaciente,
@@ -357,7 +415,7 @@ public class ReservaController {
            System.out.println("RESERVAS terapeutaActual " + terapeutaActual);
            if (terapeutaActual != null) {
                String idTerapeutaActual = terapeutaActual.getIdTerapeuta();
-               reservas = reservaService.listarReservasPorTerapeuta(idTerapeuta);
+               reservas = reservaService.listarReservasPorTerapeuta(idTerapeutaActual);
                System.out.println("RESERVAS " + reservas);
                nombreCompletoTerapeuta = terapeutaActual.getNombre() + " " + terapeutaActual.getApe_paterno();
            }
@@ -397,13 +455,101 @@ public class ReservaController {
                     .collect(Collectors.toList());
         }
 
-       model.addAttribute("reservas", reservas);
-       model.addAttribute("terapeutaNombreCompleto", nombreCompletoTerapeuta);
-       model.addAttribute("rol", rol);
-       model.addAttribute("idTerapeuta", idTerapeuta); // 🔵 Para que no pierdas el id en los filtros
+        model.addAttribute("reservas", reservas);
+        model.addAttribute("terapeutaNombreCompleto", nombreCompletoTerapeuta);
+        model.addAttribute("rol", rol);
+        model.addAttribute("idTerapeuta", idTerapeuta); // 
+
 
        return "reservas-terapeuta";  // Página que muestra las reservas
    }
+
+   @GetMapping("/cancelar/{idReserva}")
+    public String cancelarReserva(@PathVariable("idReserva") String idReserva, Model model) {
+        try {
+            // Buscar la reserva
+            Optional<Reserva> reservaOpt = reservaRepository.findById(idReserva);
+
+            if (!reservaOpt.isPresent()) {
+                model.addAttribute("mensaje", "No se encontró la reserva a cancelar.");
+                return "error";
+            }
+
+            Reserva reserva = reservaOpt.get();
+            EstadoReserva estado = reserva.getEstado();
+                if (estado != EstadoReserva.AGENDADA && estado != EstadoReserva.REAGENDADA) {
+                    model.addAttribute("error", "Solo se pueden cancelar reservas en estado AGENDADA o REAGENDADA.");
+
+                return "redirect:/reservas/verporterapeuta";
+            }
+
+            // Cambiar estado de la reserva
+            reserva.setEstado(EstadoReserva.CANCELADA);
+
+            // Si quieres además liberar el bloque asociado:
+            Optional<Bloque> bloqueOpc = bloqueRepository.findByReserva_IdReserva(idReserva);
+            
+            if(!bloqueOpc.isPresent()){
+                return "";
+            }
+            
+            Bloque bloque = bloqueOpc.get();
+            
+            if (bloque != null) {
+                bloque.setReserva(null); // Quitamos la referencia a la reserva
+                calendarioService.marcarBloquesDesocupados(bloque, reserva.getAtencion().getTerapeuta().getIdTerapeuta());
+                bloqueRepository.save(bloque);
+            }
+
+            // Guardar los cambios
+            reservaRepository.save(reserva);
+            this.enviarCancelacionReserva(reserva, bloque);
+            model.addAttribute("mensaje", "Reserva cancelada exitosamente.");
+            return "redirect:/reservas/verporterapeuta?idTerapeuta=" + reserva.getAtencion().getTerapeuta().getIdTerapeuta();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("mensaje", "Error al cancelar la reserva.");
+            return "error";
+        }
+    }
+    
+    @GetMapping("/cancelarPorCliente/{idReserva}")
+    @ResponseBody
+    public String cancelarReservaCliente(@PathVariable("idReserva") String idReserva) {
+        try {
+            Optional<Reserva> reservaOpt = reservaRepository.findById(idReserva);
+
+            if (!reservaOpt.isPresent()) {
+                return "Error: No se encontró la reserva.";
+            }
+
+            Reserva reserva = reservaOpt.get();
+            EstadoReserva estado = reserva.getEstado();
+            if (estado != EstadoReserva.AGENDADA && estado != EstadoReserva.REAGENDADA) {
+                return "Error: Solo se pueden cancelar reservas en estado AGENDADA o REAGENDADA.";
+            }
+
+            reserva.setEstado(EstadoReserva.CANCELADA);
+
+            Optional<Bloque> bloqueOpc = bloqueRepository.findByReserva_IdReserva(idReserva);
+            Bloque bloque = null;
+            if (bloqueOpc.isPresent()) {
+                bloque = bloqueOpc.get();
+                bloque.setReserva(null);
+                calendarioService.marcarBloquesDesocupados(bloque, reserva.getAtencion().getTerapeuta().getIdTerapeuta());
+                bloqueRepository.save(bloque);
+            }
+            
+            reservaRepository.save(reserva);
+            this.enviarCancelacionReserva(reserva, bloque);
+            return "Reserva cancelada exitosamente.";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error al cancelar la reserva.";
+        }
+    }
+    
 
 
 }
