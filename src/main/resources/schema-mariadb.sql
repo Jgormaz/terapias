@@ -158,7 +158,7 @@ CREATE TABLE Reserva (
     hora_fin TIME NOT NULL,
     precio INT NOT NULL,
     abono INT DEFAULT 0,
-    estado_reserva ENUM('AGENDADA', 'CANCELADA', 'NOSHOW', 'COMPLETADA', 'REAGENDADA') NOT NULL DEFAULT 'AGENDADA',
+    estado_reserva ENUM('AGENDADA', 'CANCELADA', 'NOSHOW', 'COMPLETADA', 'REAGENDADA', 'EVALUADA') NOT NULL DEFAULT 'AGENDADA',
     FOREIGN KEY (ID_paciente) REFERENCES Paciente(ID_paciente),
     FOREIGN KEY (ID_comuna) REFERENCES Comuna(ID_comuna),
     FOREIGN KEY (ID_region) REFERENCES Region(ID_region),
