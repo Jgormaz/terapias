@@ -56,7 +56,7 @@ CREATE TABLE Terapeuta (
     ID_region VARCHAR(50) NOT NULL,
     telefono VARCHAR(50),
     correo VARCHAR(50),
-    evaluacion INT DEFAULT 0,
+    evaluacion DECIMAL(3,2) DEFAULT 0.00,
     url_foto VARCHAR(255),
     FOREIGN KEY (ID_comuna) REFERENCES Comuna(ID_comuna),
     FOREIGN KEY (ID_region) REFERENCES Region(ID_region)
