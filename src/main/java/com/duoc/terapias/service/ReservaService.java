@@ -144,5 +144,7 @@ public class ReservaService {
     public List<Paciente> obtenerPacientesPorTerapeuta(String idTerapeuta) {
         return reservaRepository.findPacientesByTerapeutaId(idTerapeuta);
     }
+    
+
 
 }

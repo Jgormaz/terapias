@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Terapeutas</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .table thead {
+            background-color: #343a40;
+            color: white;
+        }
+        .table td, .table th {
+            vertical-align: middle;
+            text-align: center;
+        }
+        .header-icon {
+            font-size: 1.5rem;
+            color: #0d6efd;
+        }
+    </style>
+</head>
+<body>
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="bi bi-bar-chart-fill header-icon me-2"></i>
+            Reporte de Reservas por Terapeuta
+        </h2>
+        <a href="/" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left-circle me-1"></i> Volver al Inicio
+        </a>
+    </div>
+
+    <div class="table-responsive shadow rounded">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Terapeuta</th>
+                    <th><i class="bi bi-calendar-check text-primary"></i><br>Agendadas</th>
+                    <th><i class="bi bi-x-circle text-danger"></i><br>Canceladas</th>
+                    <th><i class="bi bi-arrow-repeat text-warning"></i><br>Reagendadas</th>
+                    <th><i class="bi bi-person-x text-secondary"></i><br>No Show</th>
+                    <th><i class="bi bi-check2-square text-success"></i><br>Completadas</th>
+                    <th><i class="bi bi-star text-info"></i><br>Evaluadas</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="r : ${reporte}">
+                    <td th:text="${r.terapeutaNombre + ' ' + r.terapeutaApePaterno}"></td>
+                    <td th:text="${r.agendadas}"></td>
+                    <td th:text="${r.canceladas}"></td>
+                    <td th:text="${r.reagendadas}"></td>
+                    <td th:text="${r.noshow}"></td>
+                    <td th:text="${r.completadas}"></td>
+                    <td th:text="${r.evaluadas}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:if="${#lists.isEmpty(reporte)}" class="alert alert-info text-center mt-4">
+        No hay datos para mostrar en el reporte.
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
