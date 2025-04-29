@@ -2,6 +2,10 @@
 package com.duoc.terapias.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 
 @Entity
 @Table(name = "bloque")
@@ -39,8 +43,43 @@ public class Bloque {
     
     @Override
     public String toString() {
-        return "Bloque{" + "ID_bloque=" + ID_bloque + ", dia=" + dia + "}";
+        return "Bloque{" + "ID_bloque=" + ID_bloque + ", dia=" + dia + ", horaIni=" + horaIni + ", horaFin=" + horaFin + "}";
     }
+    
+    @Transient
+    public LocalTime getHoraInicioLocalTime() {
+        int hora = horaIni / 100;
+        int minuto = horaIni % 100;
+        return LocalTime.of(hora, minuto);
+    }
+
+    @Transient
+    public LocalTime getHoraFinLocalTime() {
+        int hora = horaFin / 100;
+        int minuto = horaFin % 100;
+        return LocalTime.of(hora, minuto);
+    }
+    
+    @Transient
+    public LocalDateTime getFechaHoraInicio(Dia dia) {
+        if (dia == null || dia.getFecha() == null || getHoraInicioLocalTime() == null) {
+            return null;
+        }
+
+        // Convertir Date a LocalDate
+        LocalDate fecha = dia.getFecha().toInstant()
+            .atZone(ZoneId.systemDefault())
+            .toLocalDate();
+
+        return LocalDateTime.of(fecha, getHoraInicioLocalTime());
+    }
+
+    @Transient
+    public boolean isEnElPasado() {
+        LocalDateTime fechaHora = getFechaHoraInicio(dia);
+        return fechaHora != null && fechaHora.isBefore(LocalDateTime.now());
+    }
+
 }
 
 

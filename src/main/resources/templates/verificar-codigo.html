@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificar Código de Validación</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7fc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 16px;
+            color: #34495e;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .message {
+            color: red;
+            text-align: center;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Verificación de Código</h2>
+
+        <form th:action="@{/reservas/validar-codigo}" method="post" th:object="${reservaDTO}">
+            <input type="hidden" th:field="*{idBloque}" />
+            <input type="hidden" th:field="*{idServicio}" />
+            <input type="hidden" th:field="*{idTerapeuta}" />
+            <input type="hidden" th:field="*{idReserva}" />
+            <input type="hidden" th:field="*{fecha}" />
+            <input type="hidden" th:field="*{paciente.correo}" />
+            <input type="hidden" th:field="*{horaIni}" />
+            <input type="hidden" th:field="*{horaFin}" />
+            <input type="hidden" th:field="*{precio}" />
+            <input type="hidden" th:field="*{nombreTerapeuta}" />
+            <input type="hidden" th:field="*{apellidoPaternoTerapeuta}" />
+            <input type="hidden" th:field="*{nombreServicio}" />
+            <input type="hidden" th:field="*{paciente.nombre}" />
+            <input type="hidden" th:field="*{paciente.apellidoPaterno}" />
+            <input type="hidden" th:field="*{correoTerapeuta}" />
+
+            <!-- Campos ocultos para mantener contexto -->
+
+            <div class="form-group">
+                <label for="codigoIngresado">Ingrese el código enviado a su correo:</label>
+                <input type="text" name="codigoIngresado" id="codigoIngresado" required />
+            </div>
+
+            <button type="submit">Confirmar Reserva</button>
+        </form>
+
+        <div class="message" th:if="${mensaje != null}" th:text="${mensaje}"></div>
+    </div>
+
+    <div class="footer">
+        <p>Si tienes problemas, contacta a soporte.</p>
+    </div>
+</body>
+</html>
+
+

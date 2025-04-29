@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Evaluar Reserva</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Evaluar Atención</h2>
+
+    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <form th:action="@{/evaluaciones/guardar}" th:object="${evaluacionDTO}" method="post" class="card p-4">
+        <div class="mb-3">
+            <label class="form-label">ID de Reserva</label>
+            <input type="text" th:field="*{idReserva}" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Evaluación (1-5 estrellas)</label>
+            <select th:field="*{nota}" class="form-select" required>
+                <option value="">Selecciona una nota</option>
+                <option value="1">⭐</option>
+                <option value="2">⭐⭐</option>
+                <option value="3">⭐⭐⭐</option>
+                <option value="4">⭐⭐⭐⭐</option>
+                <option value="5">⭐⭐⭐⭐⭐</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Enviar Evaluación</button>
+    </form>
+
+    <a href="/" class="btn btn-link mt-3">Volver al inicio</a>
+</div>
+</body>
+</html>
+

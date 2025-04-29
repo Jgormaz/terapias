@@ -17,6 +17,7 @@ public class Dia {
     private Date fecha;
     private Integer horaIni;
     private Integer horaFin;
+    @Column(name = "tamaño_bloque")
     private Integer tamanoBloque;
     private Integer descuentoEspecial;
 
@@ -37,7 +38,7 @@ public class Dia {
     
     @Override
     public String toString() {
-        return "Dia{" + "ID_dia=" + ID_dia + ", semana=" + semana + "}";
+        return "Dia{" + "ID_dia=" + ID_dia + ", fecha=" + fecha + "}";
     }
 }
 

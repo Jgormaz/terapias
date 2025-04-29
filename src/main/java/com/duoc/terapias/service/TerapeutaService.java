@@ -5,22 +5,45 @@ import com.duoc.terapias.dto.TerapeutaInfoDTO;
 import com.duoc.terapias.model.ServicioTerapeuta;
 import com.duoc.terapias.model.Terapeuta;
 import com.duoc.terapias.repository.TerapeutaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 @Service
 public class TerapeutaService {
 
     private final TerapeutaRepository terapeutaRepository;
+    
+    @Autowired
+    private CalendarioService calendarioService;
 
     public TerapeutaService(TerapeutaRepository terapeutaRepository) {
         this.terapeutaRepository = terapeutaRepository;
     }
-    /**
+    
+        @Transactional
+    public void actualizarEstado(String id, boolean nuevoEstado) {
+        Optional<Terapeuta> terapeutaOpt = terapeutaRepository.findById(id);
+        terapeutaOpt.ifPresent(terapeuta -> {
+            terapeuta.setEnabled(nuevoEstado);
+            terapeutaRepository.save(terapeuta);
+        });
+    }
+    
+    public Terapeuta obtenerPorUsername(String username) {
+        return terapeutaRepository.findByUserName(username)
+                .orElseThrow(() -> new UsernameNotFoundException("No se encontró el terapeuta"));
+    }
+    
+    public List<Terapeuta> obtenerTerapeutasPorEspecialidad(String especialidadId) {
+        return terapeutaRepository.findByEspecialidadId(especialidadId);
+    }
+        /**
      * Obtiene la lista de terapeutas con nombre, apellidos, evaluación y lista de servicios que prestan.
      * @return Lista de terapeutas con los datos requeridos.
      */
@@ -50,5 +73,25 @@ public class TerapeutaService {
 
         return terapeutasInfo;
     }
+    
+    @Transactional
+    public void guardar(Terapeuta terapeuta) {
+        terapeutaRepository.save(terapeuta);
+    }   
+
+    public List<Terapeuta> obtenerTodos() {
+        return terapeutaRepository.findAll();
+    }
+
+    public Terapeuta obtenerPorId(String id) {
+        Optional<Terapeuta> optional = terapeutaRepository.findById(id);
+        return optional.orElse(null);
+    }
+
+    public void eliminarPorId(String id) {
+        terapeutaRepository.deleteById(id);
+    }
+
+
 }
 

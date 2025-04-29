@@ -8,19 +8,16 @@ import java.util.Date;
 @Table(name = "reserva")
 public class Reserva {
     @Id
-    private String ID_reserva;
+    @Column(name = "ID_reserva")
+    private String idReserva;
 
     @ManyToOne
     @JoinColumn(name = "ID_paciente", nullable = false)
     private Paciente paciente;
     
     @ManyToOne
-    @JoinColumn(name = "ID_terapeuta", nullable = false)
-    private Terapeuta terapeuta; // Nueva relación con Terapeuta
-    
-    @ManyToOne
-    @JoinColumn(name = "ID_especialidad", nullable = false)
-    private Especialidad especialidad; // Nueva relación con la especialidad
+    @JoinColumn(name = "ID_atencion", nullable = false)
+    private Atencion atencion; // Nueva relación con la especialidad
 
     private String nombre;
 
@@ -42,7 +39,7 @@ public class Reserva {
     private Integer abono;
     
     @Enumerated(EnumType.STRING)
-    @Column(name = "estado", nullable = false)
+    @Column(name = "estado_reserva", nullable = false)
     private EstadoReserva estado = EstadoReserva.AGENDADA; // Valor por defecto
 
     // Getters y Setters
@@ -55,14 +52,8 @@ public class Reserva {
         this.estado = estado;
     }
 
-    public String getID_reserva() { return ID_reserva; }
-    public void setID_reserva(String ID_reserva) { this.ID_reserva = ID_reserva; }
     public Paciente getPaciente() { return paciente; }
     public void setPaciente(Paciente paciente) { this.paciente = paciente; }
-    public Terapeuta getTerapeuta() { return terapeuta; }
-    public void setTerapeuta(Terapeuta terapeuta) { this.terapeuta = terapeuta; }
-    public Especialidad getEspecialidad() { return especialidad; }
-    public void setEspecialidad(Especialidad especialidad) { this.especialidad = especialidad; }
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
     public String getDireccionAtencion() { return direccionAtencion; }
@@ -82,7 +73,35 @@ public class Reserva {
     
     @Override
     public String toString() {
-        return "Reserva{" + "ID_reserva=" + ID_reserva + ", paciente=" + paciente + "}";
+        return "Reserva{" + "ID_reserva=" + idReserva + ", paciente=" + paciente + "}";
+    }
+
+    /**
+     * @return the atencion
+     */
+    public Atencion getAtencion() {
+        return atencion;
+    }
+
+    /**
+     * @param atencion the atencion to set
+     */
+    public void setAtencion(Atencion atencion) {
+        this.atencion = atencion;
+    }
+
+    /**
+     * @return the idReserva
+     */
+    public String getIdReserva() {
+        return idReserva;
+    }
+
+    /**
+     * @param idReserva the idReserva to set
+     */
+    public void setIdReserva(String idReserva) {
+        this.idReserva = idReserva;
     }
 
 

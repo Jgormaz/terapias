@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Listado de Terapeutas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 34px;
+            height: 20px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 50px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 12px;
+            width: 12px;
+            border-radius: 50px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+        }
+        input:checked + .slider {
+            background-color: #4CAF50;
+        }
+        input:checked + .slider:before {
+            transform: translateX(14px);
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Listado de Terapeutas</h2>
+
+    <!-- Filtro de Evaluación -->
+    <div class="mb-3">
+        <label for="filtroEvaluacion" class="form-label">Filtrar por Evaluación:</label>
+        <select id="filtroEvaluacion" class="form-select" onchange="filtrarPorEvaluacion()">
+            <option value="">Todas</option>
+            <option value="5">5 estrellas o más</option>
+            <option value="4">4 estrellas o más</option>
+            <option value="3">3 estrellas o más</option>
+            <option value="2">2 estrellas o más</option>
+            <option value="1">1 estrella o más</option>
+            <option value="0">Sin evaluación</option>
+        </select>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Apellido Paterno</th>
+            <th>Apellido Materno</th>
+            <th>Usuario</th>
+            <th>Habilitado</th>
+            <th>Evaluación</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="terapeuta : ${terapeutas}">
+            <td th:text="${terapeuta.nombre}">Nombre</td>
+            <td th:text="${terapeuta.ape_paterno}">Apellido Paterno</td>
+            <td th:text="${terapeuta.ape_materno}">Apellido Materno</td>
+            <td th:text="${terapeuta.userName}">Usuario</td>
+            <td>
+                <form th:action="@{/terapeuta/actualizarEstado}" method="post" th:id="'estado-form-' + ${terapeuta.IdTerapeuta}">
+                    <input type="hidden" name="id" th:value="${terapeuta.IdTerapeuta}" />
+                    <input type="hidden" name="enabled" th:value="${terapeuta.enabled}" />
+                    <label class="switch">
+                        <input type="checkbox"
+                               th:checked="${terapeuta.enabled}"
+                               th:attr="data-id=${terapeuta.IdTerapeuta}"
+                               onchange="actualizarEstado(this)">
+                        <span class="slider"></span>
+                    </label>
+                </form>
+            </td>
+            <td>
+                <span th:if="${terapeuta.evaluacion != null}">
+                    <span th:each="star : ${#numbers.sequence(1, 5)}">
+                        <i th:classappend="${star <= terapeuta.evaluacion} ? 'bi-star-fill text-warning' : 'bi-star text-secondary'"></i>
+                    </span>
+                </span>
+                <span th:if="${terapeuta.evaluacion == null}">N/A</span>
+            </td>
+            <td class="d-flex gap-2">
+                <a th:href="@{/terapeuta/editar/{id}(id=${terapeuta.IdTerapeuta})}" class="btn btn-warning btn-sm">Editar</a>
+                <a th:href="@{/terapeuta/eliminar/{id}(id=${terapeuta.IdTerapeuta})}" 
+                   class="btn btn-danger btn-sm"
+                   onclick="return confirm('¿Estás seguro que deseas eliminar este terapeuta?');">
+                   Eliminar
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a href="/" class="btn btn-primary mt-4">Volver al inicio</a>
+</div>
+
+<!-- Scripts -->
+<script>
+    function actualizarEstado(checkbox) {
+        const id = checkbox.getAttribute('data-id');
+        const form = document.getElementById('estado-form-' + id);
+        const hiddenEnabled = form.querySelector('input[name="enabled"]');
+
+        hiddenEnabled.value = checkbox.checked; // sincroniza el valor
+
+        const formData = new FormData(form);
+        checkbox.disabled = true;
+
+        fetch(form.action, {
+            method: 'POST',
+            body: formData
+        }).then(response => {
+            if (!response.ok) {
+                checkbox.checked = !checkbox.checked; // revertir visual si falla
+                alert("Error al actualizar estado");
+            }
+        }).catch(err => {
+            checkbox.checked = !checkbox.checked;
+            alert("Error de red");
+        }).finally(() => {
+            checkbox.disabled = false;
+        });
+    }
+
+    function filtrarPorEvaluacion() {
+        var filtro = document.getElementById('filtroEvaluacion').value;
+        var filas = document.querySelectorAll('tbody tr');
+
+        filas.forEach(fila => {
+            var estrellas = fila.querySelectorAll('td:nth-child(6) i.bi-star-fill').length;
+            var evaluacion = estrellas; // número de estrellas llenas
+
+            if (fila.querySelector('td:nth-child(6)').innerText.trim() === 'N/A') {
+                evaluacion = 0;
+            }
+
+            if (filtro === "") {
+                fila.style.display = "";
+            } else if (parseInt(filtro) === 0 && evaluacion === 0) {
+                fila.style.display = "";
+            } else if (evaluacion >= parseInt(filtro)) {
+                fila.style.display = "";
+            } else {
+                fila.style.display = "none";
+            }
+        });
+    }
+</script>
+</body>
+</html>
+
+
+
+
+

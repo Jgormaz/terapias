@@ -8,7 +8,8 @@ import java.util.List;
 @Table(name = "terapeuta")
 public class Terapeuta {
     @Id
-    private String ID_terapeuta;
+    @Column(name = "ID_terapeuta") // ← opcional si el nombre en BD es distinto
+    private String idTerapeuta;
 
     private String nombre;
 
@@ -39,7 +40,7 @@ public class Terapeuta {
 
     private String correo;
 
-    private Integer evaluacion;
+    private Double evaluacion;
 
     private String url_foto;  // Campo para la URL de la foto del terapeuta
 
@@ -47,8 +48,7 @@ public class Terapeuta {
     private List<ServicioTerapeuta> servicios;
 
     // Getters y Setters
-    public String getID_terapeuta() { return ID_terapeuta; }
-    public void setID_terapeuta(String ID_terapeuta) { this.ID_terapeuta = ID_terapeuta; }
+
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
     public String getApe_paterno() { return ape_paterno; }
@@ -65,8 +65,8 @@ public class Terapeuta {
     public void setTelefono(String telefono) { this.telefono = telefono; }
     public String getCorreo() { return correo; }
     public void setCorreo(String correo) { this.correo = correo; }
-    public Integer getEvaluacion() { return evaluacion; }
-    public void setEvaluacion(Integer evaluacion) { this.evaluacion = evaluacion; }
+    public Double getEvaluacion() { return evaluacion; }
+    public void setEvaluacion(Double evaluacion) { this.evaluacion = evaluacion; }
     public String getUrl_foto() { return url_foto; }
     public void setUrl_foto(String url_foto) { this.url_foto = url_foto; }
     public List<ServicioTerapeuta> getServicios() { return servicios; }
@@ -75,7 +75,7 @@ public class Terapeuta {
     @Override
     public String toString() {
         return "Terapeuta{" +
-                "ID_terapeuta='" + ID_terapeuta + '\'' +
+                "ID_terapeuta='" + idTerapeuta + '\'' +
                 ", nombre='" + nombre + '\'' +
                 ", ape_paterno='" + ape_paterno + '\'' +
                 ", ape_materno='" + ape_materno + '\'' +
@@ -117,5 +117,19 @@ public class Terapeuta {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    /**
+     * @return the idTerapeuta
+     */
+    public String getIdTerapeuta() {
+        return idTerapeuta;
+    }
+
+    /**
+     * @param idTerapeuta the idTerapeuta to set
+     */
+    public void setIdTerapeuta(String idTerapeuta) {
+        this.idTerapeuta = idTerapeuta;
     }
 }

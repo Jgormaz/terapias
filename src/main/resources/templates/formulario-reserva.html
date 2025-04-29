@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario de Reserva</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --input-width: 30ch;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 2rem auto;
+            max-width: calc(var(--input-width) + 5rem);
+            background-color: #f0f2f5;
+            color: #333;
+        }
+
+        h1, h2 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .section {
+            background: #ffffff;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        }
+
+        label {
+            display: block;
+            margin-top: 0.8rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        input, select {
+            width: var(--input-width);
+            max-width: 100%;
+            padding: 0.4rem 0.6rem;
+            margin-top: 0.3rem;
+            font-size: 0.9rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: border-color 0.2s ease-in-out;
+        }
+
+        input:focus, select:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        button {
+            margin-top: 1.2rem;
+            padding: 0.5rem 1.1rem;
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .input-group input {
+            flex: 1;
+            width: var(--input-width);
+        }
+
+        .icon-button {
+            background-color: #3498db;
+            border: none;
+            padding: 0.5rem 0.8rem;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .icon-button:hover {
+            background-color: #2980b9;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .form-row > div {
+            flex: 1 1 100%;
+        }
+
+        @media (max-width: 600px) {
+            input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<h1>Formulario de Reserva</h1>
+
+<div class="section">
+    <p><strong>Terapeuta:</strong> <span th:text="${reservaDTO.nombreTerapeuta + ' ' + reservaDTO.apellidoPaternoTerapeuta}"></span></p>
+    <p><strong>Servicio:</strong> <span th:text="${reservaDTO.nombreServicio}"></span></p>
+    <p><strong>Precio:</strong> $<span th:text="${reservaDTO.precio}"></span></p>
+    <p><strong>Fecha:</strong> <span th:text="${#temporals.format(reservaDTO.fecha, 'dd/MM/yyyy')}"></span></p>
+    <p><strong>Hora:</strong> 
+        <span th:text="${#temporals.format(reservaDTO.horaIni, 'HH:mm')}"></span> - 
+        <span th:text="${#temporals.format(reservaDTO.horaFin, 'HH:mm')}"></span>
+    </p>
+    <form th:action="@{/reservas/verificar-paciente}" th:object="${reservaDTO}" method="post">
+        <input type="hidden" th:field="*{idBloque}" />
+        <input type="hidden" th:field="*{idTerapeuta}" />
+        <input type="hidden" th:field="*{idServicio}" />
+        <label for="correo">Correo del Paciente</label>
+        <div class="input-group">
+            <input type="email" id="correo" th:field="*{paciente.correo}" required />
+            <button type="submit" class="icon-button" title="Buscar paciente">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="section" th:if="${reservaDTO.paciente.correo != null}">
+    <form th:action="@{/reservas/enviar-codigo}" th:object="${reservaDTO}" method="post">
+        <input type="hidden" th:field="*{paciente.correo}" />
+        <input type="hidden" th:field="*{idTerapeuta}" />
+        <input type="hidden" th:field="*{idServicio}" />
+        <input type="hidden" th:field="*{idReserva}" />
+        <input type="hidden" th:field="*{horaIni}" />
+        <input type="hidden" th:field="*{horaFin}" />
+        <input type="hidden" th:field="*{precio}" />
+        <input type="hidden" th:field="*{fecha}" />
+        <input type="hidden" th:field="*{idBloque}" />
+        <input type="hidden" th:field="*{nombreTerapeuta}" />
+        <input type="hidden" th:field="*{apellidoPaternoTerapeuta}" />
+        <input type="hidden" th:field="*{nombreServicio}" />
+        <input type="hidden" th:field="*{correoTerapeuta}" />
+
+        <h2 th:if="${reservaDTO.paciente.pacienteExistente}">Datos del Paciente</h2>
+        <h2 th:if="${!reservaDTO.paciente.pacienteExistente}">Registrar Nuevo Paciente</h2>
+
+        <div class="form-row">
+            <div>
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" th:field="*{paciente.nombre}" required />
+            </div>
+            <div>
+                <label for="apellidoPaterno">Apellido Paterno:</label>
+                <input type="text" id="apellidoPaterno" th:field="*{paciente.apellidoPaterno}" required />
+            </div>
+            <div>
+                <label for="apellidoMaterno">Apellido Materno:</label>
+                <input type="text" id="apellidoMaterno" th:field="*{paciente.apellidoMaterno}" required />
+            </div>
+            <div>
+                <label for="telefono">Teléfono:</label>
+                <input type="text" id="telefono" th:field="*{paciente.telefono}" required />
+            </div>
+            <div>
+                <label for="direccion">Dirección:</label>
+                <input type="text" id="direccion" th:field="*{paciente.direccion}" required />
+            </div>
+        </div>
+
+        <button type="submit">Reservar</button>
+    </form>
+</div>
+
+</body>
+</html>
+
+
+

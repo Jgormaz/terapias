@@ -3,16 +3,18 @@
 package com.duoc.terapias.controller;
 
 import com.duoc.terapias.model.Especialidad;
-import com.duoc.terapias.model.Servicio;
 import com.duoc.terapias.service.EspecialidadService;
 import com.duoc.terapias.service.ServicioService;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/especialidades")
@@ -32,35 +34,29 @@ public class EspecialidadController {
         return "especialidades";
     }
     
-    @GetMapping("/nueva")
+   /* @GetMapping("/nueva")
     public String nuevaEspecialidad(Model model) {
         model.addAttribute("especialidad", new Especialidad());
         return "especialidad_form"; // Vista para crear especialidad con servicios
-    }
+    }*/
     
     @PostMapping("/guardar")
-    public String guardarEspecialidad(@ModelAttribute Especialidad especialidad,
-                                      @RequestParam("idsServicios") List<String> idsServicios,
-                                      @RequestParam("nombresServicios") List<String> nombresServicios,
-                                      @RequestParam("descripcionesServicios") List<String> descripcionesServicios) {
-        List<Servicio> servicios = new ArrayList<>();
-
-        for (int i = 0; i < idsServicios.size(); i++) {
-            Servicio servicio = new Servicio();
-            servicio.setIdServicio(idsServicios.get(i)); // Se asigna el ID ingresado manualmente
-            servicio.setNombre(nombresServicios.get(i));
-            servicio.setDescripcion(descripcionesServicios.get(i));
-            servicio.setEspecialidad(especialidad);
-            servicios.add(servicio);
+    public String guardarEspecialidad(@ModelAttribute Especialidad especialidad, Model model) {
+        if (especialidad.getIdEspecialidad() == null || especialidad.getIdEspecialidad().isEmpty()) {
+            especialidad.setIdEspecialidad(generarIdEspecialidad());
         }
 
-        especialidad.setServicios(servicios);
-        especialidadService.guardar(especialidad);
+        Especialidad especialidadGuardada = especialidadService.guardar(especialidad);
 
-        return "redirect:/especialidades";
+        List<Especialidad> especialidades = especialidadService.obtenerTodas();
+        model.addAttribute("especialidades", especialidades);
+        model.addAttribute("especialidad", new Especialidad()); // objeto vacío para nuevo registro
+        model.addAttribute("especialidadGuardada", especialidadGuardada); // para identificar la recién creada
+
+        return "especialidades"; // no redirige, muestra la vista con datos ya cargados
     }
     
-    @PostMapping("/eliminar/{id}")
+    @GetMapping("/eliminar/{id}")
     public String eliminarEspecialidad(@PathVariable String id) {
         especialidadService.eliminar(id);
         return "redirect:/especialidades";
@@ -78,7 +74,47 @@ public class EspecialidadController {
     
     @PostMapping("/actualizar")
     public String actualizarEspecialidad(@ModelAttribute Especialidad especialidad) {
+        if (especialidad.getServicios() == null) {
+            especialidad.setServicios(new ArrayList<>());
+        } else {
+            // Filtra servicios válidos (evita insertar servicios sin ID)
+            especialidad.setServicios(
+                especialidad.getServicios().stream()
+                    .filter(servicio -> servicio.getIdServicio() != null && !servicio.getIdServicio().isEmpty())
+                    .collect(Collectors.toList())
+            );
+        }
+
         especialidadService.guardar(especialidad);
         return "redirect:/especialidades";
     }
+    
+    public static String generarIdEspecialidad() {
+        SimpleDateFormat sdf = new SimpleDateFormat("HHmmss");
+        String fechaFormateada = sdf.format(new Date());
+        return "ES" + fechaFormateada;
+    }
+    
+    public static String generarIdServicio() {
+        SimpleDateFormat sdf = new SimpleDateFormat("HHmmss");
+        String fechaFormateada = sdf.format(new Date());
+        return "SE" + fechaFormateada;
+    }
+
+    @PostMapping("/agregarServicio")
+    public String agregarServicio(@RequestParam String idEspecialidad,
+                                  @RequestParam String nombre,
+                                  @RequestParam String descripcion) {
+        especialidadService.agregarServicioAEspecialidad(idEspecialidad, generarIdServicio(), nombre, descripcion);
+        return "redirect:/especialidades";
+    }
+    
+    @PostMapping("/eliminarServicio")
+    public String eliminarServicio(@RequestParam String idServicio, @RequestParam String idEspecialidad) {
+        servicioService.eliminarPorId(idServicio);
+        return "redirect:/especialidades/editar/" + idEspecialidad;
+    }
+
+
+
 }

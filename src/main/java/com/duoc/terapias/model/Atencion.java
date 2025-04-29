@@ -16,7 +16,7 @@ public class Atencion {
     @ManyToOne
     @JoinColumn(name = "ID_servicio", nullable = false)
     private Servicio servicio;
-
+    @Column(name = "tamaño_bloque")
     private Integer tamanoBloque;
     private Integer duracionMin;
     private Integer duracionMax;

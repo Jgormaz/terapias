@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Calendario de [[${terapeuta.nombre}]]</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-size: 0.9rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1.5rem;
+      font-size: 0.85rem;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      text-align: center;
+      padding: 6px;
+    }
+    th {
+      background-color: #f4f4f4;
+      font-size: 0.9rem;
+    }
+    .hora-columna {
+      background-color: #f9f9f9;
+      font-weight: bold;
+      width: 65px;
+      text-align: right;
+      font-size: 0.85rem;
+    }
+    .disponible {
+      background-color: #c8e6c9;
+      padding: 4px;
+      font-size: 0.85rem;
+    }
+    .no-disponible {
+      background-color: #ffcdd2;
+      padding: 4px;
+      font-size: 0.85rem;
+    }
+    .navegacion-semanas {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 15px;
+      gap: 15px;
+    }
+    .btn-navegacion {
+      padding: 6px 12px;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+
+<body class="p-3">
+
+  <h2 class="mb-3">Calendario de <span th:text="${terapeuta.nombre} + ' ' + ${terapeuta.ape_paterno}">Terapeuta</span></h2>
+  <p class="mb-4"><strong>Servicio:</strong> <span th:text="${servicio.nombre}">Servicio</span></p>
+
+  <!-- Navegación entre semanas -->
+  <div class="navegacion-semanas">
+    <button id="btnAnterior" class="btn btn-primary btn-navegacion">&larr; Semana anterior</button>
+    <button id="btnSiguiente" class="btn btn-primary btn-navegacion">Semana siguiente &rarr;</button>
+  </div>
+
+  <!-- Mostrar semanas -->
+  <div th:each="semana, iterStat : ${semanas}"
+       th:id="'semana-' + ${iterStat.index}"
+       th:style="${iterStat.index != 0} ? 'display:none' : ''">
+
+    <h5 class="mt-3 mb-2">Semana <span th:text="${semana.numeroSemana}">#</span></h5>
+
+    <div class="table-responsive">
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th class="hora-columna">Hora</th>
+            <th th:each="dia : ${semana.dias}"
+                th:text="${#temporals.format(dia.fecha.toInstant().atZone(T(java.time.ZoneId).systemDefault()).toLocalDate(), 'EEE dd/MM')}">
+              Día
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Filas de horas, de 09:00 a 16:00 -->
+          <tr th:each="hora : ${#numbers.sequence(9,16)}">
+            <td class="hora-columna"
+                th:text="${#numbers.formatDecimal(hora, 2, '00') + ':00'}">
+              09:00
+            </td>
+
+            <td th:each="dia : ${semana.dias}">
+              <div th:each="bloque : ${dia.bloques}"
+                   th:if="${(bloque.horaIni / 100) == hora}">
+
+                <a th:if="${bloque.disponible}"
+                   th:href="@{'/reservas/nueva'(bloqueId=${bloque.id}, terapeutaId=${terapeuta.idTerapeuta}, servicioId=${servicio.idServicio})}"
+                   class="d-block disponible text-decoration-none text-dark">
+                  $<span th:text="${bloque.precio}"></span>
+                </a>
+
+                <div th:if="${!bloque.disponible}"
+                     class="no-disponible">
+                  $<span th:text="${bloque.precio}"></span>
+                </div>
+
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <a th:href="@{/}" class="btn btn-secondary mt-3">← Volver</a>
+
+  <!-- JavaScript para navegación de semanas -->
+  <script>
+    let semanaActual = 0;
+    const totalSemanas = /*[[${semanas.size()}]]*/ 4; // Número real de semanas
+
+    document.getElementById('btnAnterior').addEventListener('click', () => {
+      if (semanaActual > 0) {
+        mostrarSemana(semanaActual - 1);
+      }
+    });
+
+    document.getElementById('btnSiguiente').addEventListener('click', () => {
+      if (semanaActual < totalSemanas - 1) {
+        mostrarSemana(semanaActual + 1);
+      }
+    });
+
+    function mostrarSemana(nuevaSemana) {
+      document.getElementById(`semana-${semanaActual}`).style.display = 'none';
+      document.getElementById(`semana-${nuevaSemana}`).style.display = '';
+      semanaActual = nuevaSemana;
+      actualizarBotones();
+    }
+
+    function actualizarBotones() {
+      document.getElementById('btnAnterior').disabled = semanaActual === 0;
+      document.getElementById('btnSiguiente').disabled = semanaActual === totalSemanas - 1;
+    }
+
+    actualizarBotones();
+  </script>
+
+</body>
+</html>
+

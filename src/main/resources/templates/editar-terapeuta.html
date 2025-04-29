@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Editar Terapeuta</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+
+    .container {
+      max-width: 800px;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-top: 3rem;
+    }
+
+    h1 {
+      color: #0d6efd;
+      margin-bottom: 1.5rem;
+    }
+
+    .alert-fade {
+      transition: opacity 0.5s ease-in-out;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Editar Terapeuta</h1>
+
+  <!-- Alerta de confirmación -->
+  <div id="alerta" class="alert alert-success alert-dismissible fade show d-none alert-fade" role="alert">
+    Cambios guardados exitosamente.
+    <button type="button" class="btn-close" onclick="ocultarAlerta()"></button>
+  </div>
+
+  <form th:action="@{/terapeuta/editar/{id}(id=${terapeuta.IdTerapeuta})}"
+        th:object="${terapeuta}" method="post" onsubmit="mostrarAlerta(); return true;">
+
+    <div class="mb-3">
+      <label for="nombre" class="form-label">Nombre</label>
+      <input type="text" th:field="*{nombre}" class="form-control" id="nombre">
+    </div>
+
+    <div class="mb-3">
+      <label for="ape_paterno" class="form-label">Apellido Paterno</label>
+      <input type="text" th:field="*{ape_paterno}" class="form-control" id="ape_paterno">
+    </div>
+
+    <div class="mb-3">
+      <label for="ape_materno" class="form-label">Apellido Materno</label>
+      <input type="text" th:field="*{ape_materno}" class="form-control" id="ape_materno">
+    </div>
+
+    <div class="mb-3">
+      <label for="direccion_principal" class="form-label">Dirección</label>
+      <input type="text" th:field="*{direccion_principal}" class="form-control" id="direccion_principal">
+    </div>
+
+    <div class="mb-3">
+      <label for="userName" class="form-label">Correo (Username)</label>
+      <input type="email" th:field="*{userName}" class="form-control" id="userName">
+    </div>
+
+    <div class="mb-3">
+      <label for="password" class="form-label">Contraseña (dejar en blanco si no desea cambiarla)</label>
+      <input type="password" th:field="*{password}" class="form-control" id="password">
+    </div>
+
+    <div class="form-check mb-3">
+      <input type="checkbox" th:field="*{enabled}" class="form-check-input" id="enabled">
+      <label class="form-check-label" for="enabled">Activo</label>
+    </div>
+
+    <div class="mb-3">
+      <label for="telefono" class="form-label">Teléfono</label>
+      <input type="text" th:field="*{telefono}" class="form-control" id="telefono">
+    </div>
+
+    <div class="mb-3">
+      <label for="correo" class="form-label">Correo Electrónico</label>
+      <input type="email" th:field="*{correo}" class="form-control" id="correo">
+    </div>
+
+    <div class="mb-3">
+      <label for="evaluacion" class="form-label">Evaluación</label>
+      <input type="number" th:field="*{evaluacion}" class="form-control" id="evaluacion">
+    </div>
+
+    <div class="mb-3">
+      <label for="url_foto" class="form-label">URL Foto</label>
+      <input type="text" th:field="*{url_foto}" class="form-control" id="url_foto">
+    </div>
+
+    <div class="mb-3">
+      <label for="comuna" class="form-label">Comuna</label>
+      <select name="comuna" class="form-select" id="comuna">
+        <option value="" disabled>Seleccione una comuna</option>
+        <option th:each="comuna : ${comunas}"
+                th:value="${comuna.ID_comuna}"
+                th:text="${comuna.nombre}"
+                th:selected="${comuna.ID_comuna == terapeuta.comuna?.ID_comuna}">
+        </option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="region" class="form-label">Región</label>
+      <select name="region" class="form-select" id="region">
+        <option value="" disabled>Seleccione una región</option>
+        <option th:each="region : ${regiones}"
+                th:value="${region.ID_region}"
+                th:text="${region.nombre}"
+                th:selected="${region.ID_region == terapeuta.region?.ID_region}">
+        </option>
+      </select>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-4">
+      <a th:href="@{/terapeuta/lista-terapeutas}" class="btn btn-outline-secondary">← Volver</a>
+      <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  function mostrarAlerta() {
+    const alerta = document.getElementById('alerta');
+    alerta.classList.remove('d-none');
+    setTimeout(() => {
+      alerta.classList.add('d-none');
+    }, 3000);
+  }
+
+  function ocultarAlerta() {
+    document.getElementById('alerta').classList.add('d-none');
+  }
+</script>
+</body>
+</html>
