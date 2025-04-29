@@ -30,7 +30,7 @@ public class SecurityConfig {
                 .requestMatchers("/","/evaluaciones/**","/calendario/**","/reservas/**","/terapeuta/especialidad/**","/css/**", "/debug", "/js/**").permitAll()  // Solo permite página de inicio y estáticos
                 .requestMatchers("/especialidades").authenticated() // Requiere login
                 .requestMatchers("/pacientes/**").hasRole("TERAPEUTA")                   
-                .requestMatchers("/especialidades/**").hasRole("ADMIN") // Solo Admin puede modificar
+                .requestMatchers("/especialidades/**","/reportes/**").hasRole("ADMIN") // Solo Admin puede modificar
                 .requestMatchers("/terapeuta/terapeutas/nuevo", "/terapeuta/terapeutas/save").hasRole("ADMIN") // Solo Admin puede modificar
                 .anyRequest().authenticated() // TODO lo demás requiere autenticación
     )
