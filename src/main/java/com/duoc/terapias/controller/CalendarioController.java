@@ -27,40 +27,35 @@ public class CalendarioController {
     @Autowired
     private ServicioService servicioService;
 
-@GetMapping("/terapeutas/{idTerapeuta}/servicios/{idServicio}")
-public String verCalendarioTerapeutaServicio(@PathVariable("idTerapeuta") String idTerapeuta,
-                                              @PathVariable("idServicio") String idServicio,
-                                              Model model) {
-    // Obtener el terapeuta
-    Terapeuta terapeuta = terapeutaService.obtenerPorId(idTerapeuta);
-    if (terapeuta == null) {
-        // Manejar error: terapeuta no encontrado
-        return "redirect:/terapeutas";
+    @GetMapping("/terapeutas/{idTerapeuta}/servicios/{idServicio}")
+    public String verCalendarioTerapeutaServicio(@PathVariable("idTerapeuta") String idTerapeuta,
+                                                  @PathVariable("idServicio") String idServicio,
+                                                  Model model) {
+        // Obtener el terapeuta
+        Terapeuta terapeuta = terapeutaService.obtenerPorId(idTerapeuta);
+        if (terapeuta == null) {
+            // Manejar error: terapeuta no encontrado
+            return "redirect:/terapeutas";
+        }
+
+        Optional<Servicio> servicioOptional = servicioService.obtenerServicioPorId(idServicio);
+        if (!servicioOptional.isPresent()) {
+            // Manejar error: servicio no encontrado
+            return "redirect:/terapeutas";
+        }
+        Servicio servicio = servicioOptional.get();
+
+        // Obtener el calendario con semanas, días y bloques como DTO
+        CalendarioDTO calendarioDTO = calendarioService.obtenerCalendarioParaTerapeutaYServicio(terapeuta, servicio);
+
+        // Pasar datos al modelo
+        model.addAttribute("terapeuta", terapeuta);
+        model.addAttribute("servicio", servicio);
+        model.addAttribute("semanas", calendarioDTO.getSemanas());
+
+        return "calendario-terapeuta";
     }
 
-    Optional<Servicio> servicioOptional = servicioService.obtenerServicioPorId(idServicio);
-    if (!servicioOptional.isPresent()) {
-        // Manejar error: servicio no encontrado
-        return "redirect:/terapeutas";
-    }
-    Servicio servicio = servicioOptional.get();
-
-    // Obtener el calendario con semanas, días y bloques como DTO
-    CalendarioDTO calendarioDTO = calendarioService.obtenerCalendarioParaTerapeutaYServicio(terapeuta, servicio);
-
-    // Pasar datos al modelo
-    model.addAttribute("terapeuta", terapeuta);
-    model.addAttribute("servicio", servicio);
-    model.addAttribute("semanas", calendarioDTO.getSemanas());
-
-    return "calendario-terapeuta";
-}
-    
-    /*@GetMapping("/crear/{terapeutaId}")
-    public String crearCalendario(@PathVariable String terapeutaId) {
-        calendarioService.crearCalendarioParaTerapeuta(terapeutaId);
-        return "redirect:/calendario/ver/" + terapeutaId;
-    }*/
 
 }
 

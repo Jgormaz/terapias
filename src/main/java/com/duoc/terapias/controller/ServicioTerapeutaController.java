@@ -15,14 +15,6 @@ public class ServicioTerapeutaController {
     @Autowired
     private ServicioTerapeutaService servicioTerapeutaService;
 
-    // ✅ Obtener todas las asociaciones (opcional para administración o debugging)
-   /* @GetMapping
-    @ResponseBody
-    public List<ServicioTerapeuta> obtenerTodas() {
-        return servicioTerapeutaService.obtenerTodas();
-    }*/
-
-    // ✅ Eliminar asociaciones por ID del terapeuta (para que luego puedas eliminar el terapeuta)
     @DeleteMapping("/eliminarPorTerapeuta/{idTerapeuta}")
     @ResponseBody
     public String eliminarPorTerapeuta(@PathVariable String idTerapeuta) {

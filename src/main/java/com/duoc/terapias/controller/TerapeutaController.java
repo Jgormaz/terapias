@@ -118,10 +118,6 @@ public class TerapeutaController {
         return "asociar-servicios";
     }
 
-
-
-
-    // Endpoint para listar terapeutas con sus servicios
     @RequestMapping("/")
     public String obtenerTerapeutasConServicios(Model model) {
         model.addAttribute("terapeutas", terapeutaService.obtenerTerapeutasConServicios());
@@ -135,7 +131,6 @@ public class TerapeutaController {
         return "terapeutas";  
     }
 
-    // Endpoint GET para mostrar el formulario de creación de un nuevo terapeuta
     @GetMapping("/terapeutas/nuevo")
     public String mostrarFormulario(Model model) {
         model.addAttribute("terapeuta", new Terapeuta());
@@ -147,8 +142,6 @@ public class TerapeutaController {
         return "nuevo-terapeuta";  // Nombre de la plantilla con el formulario
     }
 
-    // Endpoint POST para procesar el formulario y guardar el nuevo terapeuta
-    // Se asume que en el formulario se envían los IDs de Comuna y Región
     @PostMapping("/terapeutas/save")
     public String guardarTerapeuta(
             @ModelAttribute("terapeuta") Terapeuta terapeuta,
@@ -211,6 +204,5 @@ public class TerapeutaController {
 
         return "redirect:/terapeuta/lista-terapeutas";
     }
-
 
 }
