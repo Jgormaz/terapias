@@ -40,7 +40,7 @@ public class HomeController {
     return "home";
 }
     
-        @GetMapping("/debug")
+    @GetMapping("/debug")
     @ResponseBody
     public String debugAuth() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

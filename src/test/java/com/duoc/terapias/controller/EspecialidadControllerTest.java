@@ -45,15 +45,6 @@ public class EspecialidadControllerTest {
         especialidad.setNombre("Psicología");
     }
 
-   /* @Test
-    @WithMockUser(username = "Admin", roles = {"ADMIN"})
-    public void testMostrarFormularioEspecialidad() throws Exception {
-        mockMvc.perform(get("/especialidades/nueva"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("formulario-especialidad"))
-                .andExpect(model().attributeExists("especialidad"))
-                .andExpect(model().attributeExists("servicioTemporal"));
-    }*/
 
     @Test
     @WithMockUser(username = "Admin", roles = {"ADMIN"})
