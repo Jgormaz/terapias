@@ -8,7 +8,7 @@ import java.util.List;
 @Table(name = "terapeuta")
 public class Terapeuta {
     @Id
-    @Column(name = "ID_terapeuta") // ← opcional si el nombre en BD es distinto
+    @Column(name = "ID_terapeuta") 
     private String idTerapeuta;
 
     private String nombre;

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/especialidades")
@@ -34,12 +35,6 @@ public class EspecialidadController {
         return "especialidades";
     }
     
-   /* @GetMapping("/nueva")
-    public String nuevaEspecialidad(Model model) {
-        model.addAttribute("especialidad", new Especialidad());
-        return "especialidad_form"; // Vista para crear especialidad con servicios
-    }*/
-    
     @PostMapping("/guardar")
     public String guardarEspecialidad(@ModelAttribute Especialidad especialidad, Model model) {
         if (especialidad.getIdEspecialidad() == null || especialidad.getIdEspecialidad().isEmpty()) {
@@ -57,8 +52,12 @@ public class EspecialidadController {
     }
     
     @GetMapping("/eliminar/{id}")
-    public String eliminarEspecialidad(@PathVariable String id) {
-        especialidadService.eliminar(id);
+    public String eliminarEspecialidad(@PathVariable String id, RedirectAttributes redirectAttributes) {
+        try {
+            especialidadService.eliminar(id);
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "No se puede eliminar especialidad, porque alguno(s) de sus servicios son ofrecidos ya por uno o más terapeutas");
+        }
         return "redirect:/especialidades";
     }
     

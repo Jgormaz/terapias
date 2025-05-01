@@ -91,6 +91,10 @@ public class TerapeutaService {
     public void eliminarPorId(String id) {
         terapeutaRepository.deleteById(id);
     }
+    
+    public boolean existePorUserName(String userName) {
+        return terapeutaRepository.existsByUserName(userName);
+    }
 
 
 }
