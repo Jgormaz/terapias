@@ -61,32 +61,8 @@ public class EspecialidadService {
         }
     }
     
-    /*@Transactional
-    public Especialidad guardar(Especialidad especialidad) {
-        Especialidad especialidadExistente = especialidadRepository.findById(especialidad.getIdEspecialidad())
-                .orElseThrow(() -> new IllegalArgumentException("Especialidad no encontrada"));
-
-        // Eliminar servicios que ya no están
-        especialidadExistente.getServicios()
-                .removeIf(servicio -> !especialidad.getServicios().contains(servicio));
-
-        // Agregar o actualizar los nuevos servicios
-        for (Servicio servicio : especialidad.getServicios()) {
-            if (!especialidadExistente.getServicios().contains(servicio)) {
-                especialidadExistente.addServicio(servicio);
-            }
-        }
-
-        // Actualizar los campos básicos
-        especialidadExistente.setNombre(especialidad.getNombre());
-        especialidadExistente.setDescripcion(especialidad.getDescripcion());
-
-        return especialidadRepository.save(especialidadExistente);
-    }*/
-
-    
     @Transactional
-    public void eliminar(String idEspecialidad) {
+    public void eliminar(String idEspecialidad) throws Exception {
         Optional<Especialidad> optional = especialidadRepository.findById(idEspecialidad);
         if (optional.isPresent()) {
             Especialidad especialidad = optional.get();

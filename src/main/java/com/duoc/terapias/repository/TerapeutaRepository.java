@@ -32,10 +32,8 @@ public interface TerapeutaRepository extends JpaRepository<Terapeuta, String> {
     @Query("UPDATE Terapeuta t SET t.enabled = :enabled WHERE t.idTerapeuta = :id")
     void updateEnabledStatus(@Param("id") String id, @Param("enabled") boolean enabled);
     
-    /*@Modifying
-    
-    @Query("UPDATE Terapeuta t SET t.enabled = :enabled WHERE t.idTerapeuta = :id")
-    void updateEnabledStatus(String id, boolean enabled);*/
+    boolean existsByUserName(String userName);
+
 
 
 
