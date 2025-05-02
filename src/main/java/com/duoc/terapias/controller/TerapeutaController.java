@@ -133,10 +133,13 @@ public class TerapeutaController {
 
     @GetMapping("/terapeutas/nuevo")
     public String mostrarFormulario(Model model) {
-        model.addAttribute("terapeuta", new Terapeuta());
+        
+        Terapeuta nuevo = new Terapeuta();
+        nuevo.setEvaluacion(0.0);
+        nuevo.setEnabled(true); 
+        model.addAttribute("terapeuta", nuevo);
         // Se agregan las listas de comunas y regiones para poblar los dropdowns en la vista
         List<Comuna> comunas = comunaService.obtenerTodas();
-        System.out.println("Lista de comunas: " + comunas);
         model.addAttribute("comunas", comunas);
         model.addAttribute("regiones", regionService.obtenerTodas());
         return "nuevo-terapeuta";  // Nombre de la plantilla con el formulario
@@ -146,7 +149,15 @@ public class TerapeutaController {
     public String guardarTerapeuta(
             @ModelAttribute("terapeuta") Terapeuta terapeuta,
             @RequestParam("comuna") String idComuna,
-            @RequestParam("region") String idRegion) {
+            @RequestParam("region") String idRegion,
+            RedirectAttributes redirectAttributes) {
+        
+            // Validar que el userName no exista
+            
+        if (terapeutaService.existePorUserName(terapeuta.getUserName())) {
+            redirectAttributes.addFlashAttribute("error", "El nombre de usuario ya existe. Por favor, elige otro.");
+            return "redirect:/terapeuta/terapeutas/nuevo";  // Redirige de vuelta al formulario
+        }
 
         // Se obtiene el objeto Comuna y Region a partir de sus IDs
         Comuna comuna = comunaService.buscarPorId(idComuna);
@@ -166,6 +177,10 @@ public class TerapeutaController {
         if (terapeuta == null) {
             return "redirect:/terapeuta/?error";  // o una página de error específica
         }
+        if(terapeuta.getEvaluacion() == null){
+            terapeuta.setEvaluacion(0.0);
+        }
+        terapeuta.setEnabled(true); 
 
         model.addAttribute("terapeuta", terapeuta);
         model.addAttribute("comunas", comunaService.obtenerTodas());

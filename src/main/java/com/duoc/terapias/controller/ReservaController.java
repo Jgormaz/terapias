@@ -147,11 +147,6 @@ public class ReservaController {
             @ModelAttribute("reservaDTO") ReservaDTO dto,
             Model model) {
         
-        System.out.println(">>> VERIFICAR PACIENTE");
-        System.out.println("Terapeuta ID antes: " + dto.getIdTerapeuta());
-        System.out.println("Servicio ID antes: " + dto.getIdServicio());
-
-
         // Buscar paciente por correo
         Optional<Paciente> pacienteOpt = pacienteRepository.findByCorreo(dto.getPaciente().getCorreo());
 
@@ -205,10 +200,6 @@ public class ReservaController {
     public String guardarPacienteYCrearReserva(@ModelAttribute("reservaDTO") ReservaDTO dto, Model model) {
         PacienteDTO pacienteDTO = dto.getPaciente();
 
-        System.out.println(">>> GUARDAR RESERVA");
-        System.out.println("Terapeuta ID: " + dto.getIdTerapeuta());
-        System.out.println("Servicio ID: " + dto.getIdServicio());
-
         Paciente paciente = pacienteRepository.findById(pacienteDTO.getCorreo()).orElse(null);
         Comuna comuna = comunaRepository.findById("COM001").orElse(null);
         Region region = regionRepository.findById("REG001").orElse(null);
@@ -254,13 +245,10 @@ public class ReservaController {
     public String validarCodigoYCrearReserva(@ModelAttribute("reservaDTO") ReservaDTO dto,
                                              @RequestParam("codigoIngresado") String codigo,
                                              Model model) {
-        System.out.println("validar codigo");
         String fechaDDMMAAAA = dto.getFecha().format(DateTimeFormatter.ofPattern("ddMMyyyy"));
-        System.out.println("Fecha: " + fechaDDMMAAAA);
         if (!PasswordGenerator.validarCodigo(fechaDDMMAAAA, codigo)) {
             model.addAttribute("mensaje", "Código incorrecto. Intente nuevamente.");
             model.addAttribute("reservaDTO", dto);
-            System.out.println("Código incorrecto. Intente nuevamente.");
             return "verificar-codigo";
         }
         
@@ -270,17 +258,14 @@ public class ReservaController {
         Bloque bloque = bloqueRepository.findById(dto.getIdBloque()).orElse(null);
 
         try {
-            System.out.println("Buscar atención correspondiente " + dto.getIdTerapeuta() + " " + dto.getIdServicio());
             Optional<Atencion> atencionOpt = atencionRepository.findByTerapeuta_IdTerapeutaAndServicio_IdServicio(dto.getIdTerapeuta(), dto.getIdServicio());
             if (!atencionOpt.isPresent()) {
-                System.out.println("No se encontró la atención correspondiente.");
                 model.addAttribute("mensaje", "No se encontró la atención correspondiente.");
                 model.addAttribute("reservaDTO", dto);
                 return "formulario-reserva";
             }
             Atencion atencion = atencionOpt.get();
 
-            System.out.println("Crear nueva reserva");
             Reserva reserva = new Reserva();
             String idReserva = "RE" + LocalTime.now().format(DateTimeFormatter.ofPattern("HHmmss"));
 

@@ -18,14 +18,37 @@
 </head>
 <body style="background-color: #f8f9fa;">
   <div class="container mt-5">
+    <div th:if="${error}" class="alert alert-danger" role="alert">
+        <span th:text="${error}"></span>
+    </div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="bi bi-bar-chart-fill header-icon me-2"></i>
+            Agregar Nuevo Terapeuta
+        </h2>
+        <a href="/" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left-circle me-1"></i> Volver al Inicio
+        </a>
+    </div>
     <div class="form-section">
-      <h1 class="text-center">Agregar Nuevo Terapeuta</h1>
       <form th:action="@{/terapeuta/terapeutas/save}" th:object="${terapeuta}" method="post">
+        
+        <input type="hidden" th:field="*{userName}" id="userNameOculto" />
+        <input type="hidden" th:field="*{IdTerapeuta}" id="idTerapeutaOculto" />  
+        <input type="hidden" th:field="*{evaluacion}" />
+        <input type="hidden" th:field="*{enabled}" />
 
+        
         <div class="row g-3">
+                        
           <div class="col-md-6">
-            <label for="IdTerapeuta" class="form-label">ID Terapeuta</label>
-            <input type="text" th:field="*{IdTerapeuta}" class="form-control" id="IdTerapeuta" placeholder="Ingrese ID">
+            <label for="correo" class="form-label">Correo Electrónico (UserName)</label>
+            <input type="email" th:field="*{correo}" class="form-control" id="correo" placeholder="Ingrese correo" oninput="sincronizarCorreo(this.value)">
+          </div>
+       
+          <div class="col-md-6">
+            <label for="password" class="form-label">Contraseña</label>
+            <input type="password" th:field="*{password}" class="form-control" id="password" placeholder="Ingrese contraseña">
           </div>
 
           <div class="col-md-6">
@@ -54,39 +77,6 @@
           </div>
 
           <div class="col-md-6">
-            <label for="correo" class="form-label">Correo Electrónico</label>
-            <input type="email" th:field="*{correo}" class="form-control" id="correo" placeholder="Ingrese correo">
-          </div>
-
-          <div class="col-md-6">
-            <label for="userName" class="form-label">Correo (Username)</label>
-            <input type="email" th:field="*{userName}" class="form-control" id="userName" placeholder="Ingrese correo">
-          </div>
-
-          <div class="col-md-6">
-            <label for="password" class="form-label">Contraseña</label>
-            <input type="password" th:field="*{password}" class="form-control" id="password" placeholder="Ingrese contraseña">
-          </div>
-
-          <div class="col-md-6">
-            <label for="evaluacion" class="form-label">Evaluación</label>
-            <input type="number" th:field="*{evaluacion}" class="form-control" id="evaluacion" placeholder="Ingrese evaluación">
-          </div>
-
-          <div class="col-md-6">
-            <label for="url_foto" class="form-label">URL de la Foto</label>
-            <input type="text" th:field="*{url_foto}" class="form-control" id="url_foto" placeholder="Ingrese URL de la foto">
-          </div>
-
-          <div class="col-md-6">
-            <label for="enabled" class="form-label d-block">Activo</label>
-            <div class="form-check form-switch">
-              <input type="checkbox" th:field="*{enabled}" class="form-check-input" id="enabled">
-              <label class="form-check-label" for="enabled">Habilitado</label>
-            </div>
-          </div>
-
-          <div class="col-md-6">
             <label for="comuna" class="form-label">Comuna</label>
             <select th:field="*{comuna}" class="form-select" id="comuna">
               <option value="" disabled selected>Seleccione una comuna</option>
@@ -96,7 +86,7 @@
 
           <div class="col-md-6">
             <label for="region" class="form-label">Región</label>
-            <select name="region" class="form-select" id="region">
+            <select th:field="*{region}" class="form-select" id="region">
               <option value="" disabled selected>Seleccione una región</option>
               <option th:each="region : ${regiones}" th:value="${region.ID_region}" th:text="${region.nombre}"></option>
             </select>
@@ -105,12 +95,18 @@
 
           
         <div class="d-flex justify-content-between">
-            <a href="/" class="btn btn-secondary">Volver</a>
             <button type="submit" class="btn btn-primary">Guardar</button>
         </div>
       </form>
     </div>
   </div>
+    
+  <script>
+    function sincronizarCorreo(valor) {
+      document.getElementById('userNameOculto').value = valor;
+      document.getElementById('idTerapeutaOculto').value = valor;
+    }
+  </script>
 </body>
 </html>
 

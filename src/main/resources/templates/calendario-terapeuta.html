@@ -56,8 +56,13 @@
 
 <body class="p-3">
 
+<div class="d-flex justify-content-between align-items-center mb-4">
   <h2 class="mb-3">Calendario de <span th:text="${terapeuta.nombre} + ' ' + ${terapeuta.ape_paterno}">Terapeuta</span></h2>
-  <p class="mb-4"><strong>Servicio:</strong> <span th:text="${servicio.nombre}">Servicio</span></p>
+  <h3 class="mb-4"><strong>Servicio:</strong> <span th:text="${servicio.nombre}">Servicio</span></h3>
+    <a href="/" class="btn btn-outline-primary">
+        <i class="bi bi-arrow-left-circle me-1"></i> Volver al Inicio
+    </a>
+</div>
 
   <!-- Navegación entre semanas -->
   <div class="navegacion-semanas">
@@ -114,7 +119,7 @@
     </div>
   </div>
 
-  <a th:href="@{/}" class="btn btn-secondary mt-3">← Volver</a>
+
 
   <!-- JavaScript para navegación de semanas -->
   <script>

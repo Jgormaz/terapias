@@ -214,7 +214,7 @@ CREATE TABLE Bloque (
 
 INSERT INTO Admin (user_name, password) VALUES ('Admin', 'admin');
 
-INSERT INTO categoria values ('CAT0001','Nuevo')
+INSERT INTO categoria values ('CAT0001','Nuevo');
 
 INSERT INTO Region (ID_region, nombre) VALUES
 ('REG001', 'Región Metropolitana'),
@@ -249,7 +249,7 @@ INSERT INTO Comuna (ID_comuna, ID_region, nombre) VALUES
 
 
 
---Limpia calendarios
+-- Limpia calendarios
 delete from bloque;
 delete from reserva;
 delete from dia;

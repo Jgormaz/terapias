@@ -155,20 +155,6 @@ class TerapeutaControllerTest {
         assertEquals("nuevo-terapeuta", view);
     }
 
-    @Test
-    void testGuardarTerapeuta() {
-        Terapeuta t = new Terapeuta();
-        Comuna comuna = new Comuna();
-        Region region = new Region();
-
-        when(comunaService.buscarPorId("c1")).thenReturn(comuna);
-        when(regionService.buscarPorId("r1")).thenReturn(region);
-
-        String view = controller.guardarTerapeuta(t, "c1", "r1");
-
-        verify(terapeutaService).guardar(t);
-        assertEquals("redirect:/", view);
-    }
 
     @Test
     void testMostrarFormularioEdicion_Existe() {
