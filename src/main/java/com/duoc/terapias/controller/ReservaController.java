@@ -44,6 +44,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.duoc.terapias.util.PasswordGenerator;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -279,6 +280,7 @@ public class ReservaController {
             reserva.setRegion(region);
 
             Date dateIni = Date.from(dto.getHoraIni().atZone(ZoneId.systemDefault()).toInstant());
+            System.out.println("HORAINI " + dateIni);
             reserva.setHoraIni(dateIni);
             Date dateFin = Date.from(dto.getHoraFin().atZone(ZoneId.systemDefault()).toInstant());
             reserva.setHoraFin(dateFin);
@@ -314,8 +316,10 @@ public class ReservaController {
         mensaje += "Terapeuta: " + reserva.getAtencion().getTerapeuta().getNombre() + " " + reserva.getAtencion().getTerapeuta().getApe_paterno() + "\n";
         mensaje += "Servicio: " + reserva.getAtencion().getServicio().getNombre() + "\n";
         mensaje += "Paciente: " + reserva.getPaciente().getNombre() + " " + reserva.getPaciente().getApe_materno() + "\n";
-        mensaje += "Fecha: " + bloque.getDia().getFecha() + "\n";
-        mensaje += "Hora: " + reserva.getHoraIni() + "\n";
+        SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat formatoHora = new SimpleDateFormat("HH:mm");
+        mensaje += "Fecha: " + formatoFecha.format(bloque.getDia().getFecha()) + "\n";
+        mensaje += "Hora: " + formatoHora.format(reserva.getHoraIni()) + "\n";
         mensaje += "Precio: " + reserva.getPrecio() + "\n";
         mensaje += "ID Reserva: " + reserva.getIdReserva() + "\n";
         
