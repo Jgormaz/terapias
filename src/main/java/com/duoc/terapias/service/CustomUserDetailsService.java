@@ -46,7 +46,6 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
         System.out.println("Terapeuta encontrado: " + terapeuta.getUserName());
-        System.out.println("Contraseña en BD (sin encriptar): " + terapeuta.getPassword());
 
         return User.withUsername(terapeuta.getUserName())
                 .password(terapeuta.getPassword()) // Contraseña en texto plano
