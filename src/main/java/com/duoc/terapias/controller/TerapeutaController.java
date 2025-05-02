@@ -140,7 +140,6 @@ public class TerapeutaController {
         model.addAttribute("terapeuta", nuevo);
         // Se agregan las listas de comunas y regiones para poblar los dropdowns en la vista
         List<Comuna> comunas = comunaService.obtenerTodas();
-        System.out.println("Lista de comunas: " + comunas);
         model.addAttribute("comunas", comunas);
         model.addAttribute("regiones", regionService.obtenerTodas());
         return "nuevo-terapeuta";  // Nombre de la plantilla con el formulario
@@ -155,9 +154,7 @@ public class TerapeutaController {
         
             // Validar que el userName no exista
             
-        System.out.println("Validando User name" + terapeuta.getUserName());
         if (terapeutaService.existePorUserName(terapeuta.getUserName())) {
-            System.out.println("User name existe " + terapeuta.getUserName());
             redirectAttributes.addFlashAttribute("error", "El nombre de usuario ya existe. Por favor, elige otro.");
             return "redirect:/terapeuta/terapeutas/nuevo";  // Redirige de vuelta al formulario
         }
@@ -180,6 +177,10 @@ public class TerapeutaController {
         if (terapeuta == null) {
             return "redirect:/terapeuta/?error";  // o una página de error específica
         }
+        if(terapeuta.getEvaluacion() == null){
+            terapeuta.setEvaluacion(0.0);
+        }
+        terapeuta.setEnabled(true); 
 
         model.addAttribute("terapeuta", terapeuta);
         model.addAttribute("comunas", comunaService.obtenerTodas());

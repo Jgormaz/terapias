@@ -169,7 +169,6 @@ public class CalendarioService {
                     bloque.setHoraIni(k * 100);
                     bloque.setHoraFin((k + 1) * 100);
                     boolean esBloqueado = this.existeBloqueEnLista(bloquesBloqueados, dia.getFecha(), bloque.getHoraIni(), bloque.getHoraFin());
-                    System.out.println("El bloque " + dia.getFecha() + " " + bloque.getHoraIni() + bloque.getHoraFin() + "es bloquedo:" + esBloqueado);
                     bloque.setDisponible(!bloque.isEnElPasado() && !esBloqueado);
                     //bloque.setDisponible(!bloque.isEnElPasado());
                     bloque.setPrecio(20000);
@@ -185,7 +184,6 @@ public class CalendarioService {
         Optional<Terapeuta> terapeutaOpc = terapeutaRepository.findById(idTerapeuta);
         
         if(!terapeutaOpc.isPresent()){
-            System.out.println("No se encontró el terapeuta con ID: " + idTerapeuta);
             return;
         }
         
@@ -203,7 +201,6 @@ public class CalendarioService {
 
         Date fechaTruncada = truncateToDate(bloqueReservado.getDia().getFecha());
 
-        System.out.println("idTerapeuta:" + idTerapeuta + " fecha:" + fechaTruncada + " horaIni:" + bloqueReservado.getHoraIni() + " horaFin:" + bloqueReservado.getHoraFin());
         List<Bloque> bloques = bloqueRepository.findByTerapeutaAndFechaAndHoraIniAndHoraFin(idTerapeuta, fechaTruncada, bloqueReservado.getHoraIni(), bloqueReservado.getHoraFin());
         System.out.println(bloques);
         for (Bloque bloque : bloques) {
@@ -222,7 +219,6 @@ public class CalendarioService {
         Optional<Terapeuta> terapeutaOpc = terapeutaRepository.findById(idTerapeuta);
         
         if(!terapeutaOpc.isPresent()){
-            System.out.println("No se encontró el terapeuta con ID: " + idTerapeuta);
             return;
         }
         
@@ -240,9 +236,7 @@ public class CalendarioService {
 
         Date fechaTruncada = truncateToDate(bloqueLiberado.getDia().getFecha());
 
-        System.out.println("idTerapeuta:" + idTerapeuta + " fecha:" + fechaTruncada + " horaIni:" + bloqueLiberado.getHoraIni() + " horaFin:" + bloqueLiberado.getHoraFin());
         List<Bloque> bloques = bloqueRepository.findByTerapeutaAndFechaAndHoraIniAndHoraFin(idTerapeuta, fechaTruncada, bloqueLiberado.getHoraIni(), bloqueLiberado.getHoraFin());
-        System.out.println(bloques);
         for (Bloque bloque : bloques) {
             if (!bloque.getDisponible()) {
                 bloque.setDisponible(true);
@@ -257,7 +251,6 @@ public class CalendarioService {
         Optional<Terapeuta> terapeutaOptional = terapeutaRepository.findById(idTerapeuta);
 
         if (!terapeutaOptional.isPresent()) {
-            System.out.println("No se encontró el terapeuta con ID: " + idTerapeuta);
             return Collections.emptyList();
         }
 
@@ -426,7 +419,7 @@ public class CalendarioService {
 
     public boolean existeBloqueEnLista(List<BloqueDTO> bloques, Date fecha, Integer horaIni, Integer horaFin) {
         
-        System.out.println( fecha + " " + horaIni + " " + horaFin + " " + bloques);
+        
         if (bloques == null || bloques.isEmpty()) {
             return false;
         }
