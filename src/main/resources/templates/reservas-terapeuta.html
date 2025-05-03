@@ -126,13 +126,13 @@
                                     Estado
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li>
+                                    <li th:if="${T(java.time.LocalDateTime).of(reserva.fecha, reserva.horaIni).isBefore(T(java.time.LocalDateTime).now())}">
                                         <a class="dropdown-item" 
                                            th:href="@{/reservas/cambiar-estado/{idReserva}/{nuevoEstado}(idReserva=${reserva.idReserva}, nuevoEstado='COMPLETADA')}">
                                            Marcar como Completada
                                         </a>
                                     </li>
-                                    <li>
+                                    <li th:if="${T(java.time.LocalDateTime).of(reserva.fecha, reserva.horaIni).isBefore(T(java.time.LocalDateTime).now())}">
                                         <a class="dropdown-item" 
                                            th:href="@{/reservas/cambiar-estado/{idReserva}/{nuevoEstado}(idReserva=${reserva.idReserva}, nuevoEstado='NOSHOW')}">
                                            Marcar como No Show
