@@ -105,8 +105,11 @@
             </td>
             <td>
                 <span th:if="${terapeuta.evaluacion != null}">
-                    <span th:each="star : ${#numbers.sequence(1, 5)}">
-                        <i th:classappend="${star <= terapeuta.evaluacion} ? 'bi-star-fill text-warning' : 'bi-star text-secondary'"></i>
+                    <span th:each="i : ${#numbers.sequence(1, 5)}">
+                        <i th:classappend="
+                            ${i <= T(java.lang.Math).floor(terapeuta.evaluacion)} ? 'bi-star-fill text-warning' :
+                            (${i - 1 < terapeuta.evaluacion} ? 'bi-star-half text-warning' : 'bi-star text-secondary')
+                        "></i>
                     </span>
                 </span>
                 <span th:if="${terapeuta.evaluacion == null}">N/A</span>

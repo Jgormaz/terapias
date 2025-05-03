@@ -118,9 +118,9 @@ public class ReservaService {
         }
 
         // Obtener cuántas reservas COMPLETADAS tiene el terapeuta (antes de esta evaluación)
-        long cantidadCompletadas = reservaRepository.countByAtencion_TerapeutaAndEstado(terapeuta, EstadoReserva.COMPLETADA);
+        long cantidadEvaluadas = reservaRepository.countByAtencion_TerapeutaAndEstado(terapeuta, EstadoReserva.EVALUADA);
 
-        if (cantidadCompletadas <= 0) {
+        if (cantidadEvaluadas <= 0) {
             throw new IllegalStateException("Error en la cantidad de reservas completadas");
         }
 
@@ -129,8 +129,15 @@ public class ReservaService {
         if (evaluacionActual == null) {
             evaluacionActual = 0.0;
         }
+        
+        System.out.println("evaluacionActual " + evaluacionActual);
+        System.out.println("cantidadCompletadas " + cantidadEvaluadas);
+        System.out.println("nuevaNota " + nuevaNota);
+        System.out.println("suma notas " + ((evaluacionActual * (cantidadEvaluadas)) + nuevaNota));
+        
 
-        double nuevaEvaluacion = ((evaluacionActual * (cantidadCompletadas - 1)) + nuevaNota) / cantidadCompletadas;
+        double nuevaEvaluacion = ((evaluacionActual * (cantidadEvaluadas)) + nuevaNota) / (cantidadEvaluadas + 1);
+        System.out.println("nuevaEvaluacion " + nuevaEvaluacion);
         terapeuta.setEvaluacion(nuevaEvaluacion);
 
         // Actualizar terapeuta
