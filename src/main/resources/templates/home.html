@@ -15,7 +15,11 @@
         }
 
         .navbar-custom {
-            background-color: #2c3e50;
+            background-color: #98d4bb;
+        }
+
+        .company-name{
+            -webkit-text-stroke: 0.5px black;
         }
 
         .navbar-custom .nav-link, 
@@ -25,7 +29,7 @@
         }
 
         .navbar-custom .nav-link:hover {
-            background-color: #34495e;
+            background-color: #eb96aa;
             border-radius: 5px;
         }
 
@@ -36,12 +40,13 @@
         }
 
         .btn-custom {
-            background-color: #3498db;
+            background-color: #98d4bb;
             color: white;
         }
 
         .btn-custom:hover {
-            background-color: #2980b9;
+            background-color: #218b82;
+            color: white;
         }
 
         .acordeon-header {
@@ -58,12 +63,15 @@
 <!-- Navegación -->
 <nav class="navbar navbar-expand-lg navbar-custom">
   <div class="container-fluid">
+
+    <a class="navbar-brand fw-bold company-name" href="/">Terapia Spa</a>
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav me-auto">
+      <ul class="navbar-nav ms-auto">
         <li class="nav-item" sec:authorize="!isAuthenticated()">
             <a class="nav-link" th:href="@{'/login-role'}">Login</a>
         </li>
@@ -116,7 +124,7 @@
             <a class="nav-link" th:href="@{/evaluaciones/nueva}">Evaluar Atención</a>
         </li>
       </ul>
-
+      
       <div class="user-info" sec:authorize="isAuthenticated()">
           Usuario: <span sec:authentication="name"></span> |
           <a class="nav-link d-inline" th:href="@{/logout}" style="color: #f39c12;">Cerrar sesión</a>
